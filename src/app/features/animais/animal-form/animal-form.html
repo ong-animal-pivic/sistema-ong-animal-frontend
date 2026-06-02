@@ -1,0 +1,128 @@
+<div class="form-cabecalho">
+  <h1>{{ ehEdicao() ? 'Editar animal' : 'Novo animal' }}</h1>
+</div>
+
+@if (carregando()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input matInput formControlName="nome" maxlength="50" />
+    @if (form.controls.nome.hasError('required')) {
+      <mat-error>Informe o nome.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Idade (anos)</mat-label>
+    <input matInput type="number" formControlName="idade" min="0" />
+    @if (form.controls.idade.hasError('min')) {
+      <mat-error>A idade não pode ser negativa.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Porte</mat-label>
+    <mat-select formControlName="porte">
+      @for (opcao of portes; track opcao.value) {
+        <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+      }
+    </mat-select>
+    @if (form.controls.porte.hasError('required')) {
+      <mat-error>Selecione o porte.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Sexo</mat-label>
+    <mat-select formControlName="sexo">
+      @for (opcao of sexos; track opcao.value) {
+        <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+      }
+    </mat-select>
+    @if (form.controls.sexo.hasError('required')) {
+      <mat-error>Selecione o sexo.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Raça</mat-label>
+    <mat-select formControlName="racaId">
+      @for (raca of racas(); track raca.id) {
+        <mat-option [value]="raca.id">
+          {{ raca.nome }}
+          @if (raca.especie) {
+            ({{ raca.especie.nome }})
+          }
+        </mat-option>
+      }
+    </mat-select>
+    @if (form.controls.racaId.hasError('required')) {
+      <mat-error>Selecione a raça.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status">
+      @for (opcao of statusList; track opcao.value) {
+        <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (ehAdotado) {
+    <mat-form-field appearance="outline">
+      <mat-label>ID do adotante</mat-label>
+      <input matInput type="number" formControlName="adotanteId" min="1" />
+      <mat-hint>Obrigatório quando o status é "Adotado".</mat-hint>
+      @if (form.controls.adotanteId.hasError('required')) {
+        <mat-error>Informe o adotante.</mat-error>
+      }
+    </mat-form-field>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>Data de resgate</mat-label>
+    <input matInput [matDatepicker]="pickerResgate" formControlName="dataResgate" />
+    <mat-datepicker-toggle matIconSuffix [for]="pickerResgate" />
+    <mat-datepicker #pickerResgate />
+    @if (form.controls.dataResgate.hasError('required')) {
+      <mat-error>Informe a data de resgate.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Data de saída</mat-label>
+    <input matInput [matDatepicker]="pickerSaida" formControlName="dataSaida" />
+    <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
+    <mat-datepicker #pickerSaida />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Cor dos olhos</mat-label>
+    <input matInput formControlName="corOlhos" maxlength="20" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Cor da pelagem</mat-label>
+    <input matInput formControlName="corPelagem" maxlength="20" />
+  </mat-form-field>
+
+  <mat-checkbox formControlName="castrado" class="campo-largo">Castrado</mat-checkbox>
+
+  <mat-form-field appearance="outline" class="campo-largo">
+    <mat-label>Observação</mat-label>
+    <textarea matInput formControlName="observacao" rows="3"></textarea>
+  </mat-form-field>
+
+  <div class="form-acoes campo-largo">
+    <button mat-button type="button" routerLink="/animais">Cancelar</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="salvando()">
+      <mat-icon>save</mat-icon>
+      Salvar
+    </button>
+  </div>
+</form>

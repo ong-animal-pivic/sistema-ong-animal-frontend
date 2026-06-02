@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.form-cabecalho {
+  margin-bottom: 16px;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.campo-largo {
+  grid-column: 1 / -1;
+}
+
+.form-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+}
