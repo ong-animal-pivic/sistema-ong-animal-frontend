@@ -10,6 +10,11 @@ export type AnimalStatus =
   | 'OBITO';
 export type AnimalEspecie = 'GATO' | 'CACHORRO';
 
+export const ANIMAL_ESPECIES: Opcao<AnimalEspecie>[] = [
+  { value: 'CACHORRO', label: 'Cachorro' },
+  { value: 'GATO', label: 'Gato' },
+];
+
 export interface Opcao<T> {
   value: T;
   label: string;

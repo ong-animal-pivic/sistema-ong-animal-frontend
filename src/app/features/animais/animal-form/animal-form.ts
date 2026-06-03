@@ -24,9 +24,11 @@ import { Animal } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
 import { Adotante } from '../../../models/adotante.model';
 import {
+  ANIMAL_ESPECIES,
   ANIMAL_PORTES,
   ANIMAL_SEXOS,
   ANIMAL_STATUS,
+  AnimalEspecie,
   AnimalPorte,
   AnimalSexo,
   AnimalStatus,
@@ -83,11 +85,12 @@ export class AnimalForm implements OnInit {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
+  readonly especies = ANIMAL_ESPECIES;
   readonly portes = ANIMAL_PORTES;
   readonly sexos = ANIMAL_SEXOS;
   readonly statusList = ANIMAL_STATUS;
 
-  readonly racas = signal<Raca[]>([]);
+  readonly todasRacas = signal<Raca[]>([]);
   readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly salvando = signal(false);
@@ -97,6 +100,7 @@ export class AnimalForm implements OnInit {
   readonly form = this.fb.group({
     nome: ['', [Validators.required, Validators.maxLength(50)]],
     idade: [0, [Validators.required, Validators.min(0)]],
+    especie: [null as AnimalEspecie | null, Validators.required],
     porte: [null as AnimalPorte | null, Validators.required],
     sexo: [null as AnimalSexo | null, Validators.required],
     status: ['DISPONIVEL' as AnimalStatus, Validators.required],
@@ -106,8 +110,18 @@ export class AnimalForm implements OnInit {
     corOlhos: [''],
     corPelagem: [''],
     observacao: [''],
-    racaId: [null as number | null, Validators.required],
+    racaId: [{ value: null as number | null, disabled: true }, Validators.required],
     adotanteId: [null as number | null],
+  });
+
+  private readonly especieSelecionada = toSignal(
+    this.form.controls.especie.valueChanges,
+    { initialValue: this.form.controls.especie.value },
+  );
+  readonly racasFiltradas = computed(() => {
+    const especie = this.especieSelecionada();
+    if (!especie) return [];
+    return this.todasRacas().filter((r) => r.especie?.nome === especie);
   });
 
   // Sugestões filtradas pelo texto digitado (autocomplete); aceita valores fora da lista.
@@ -127,6 +141,19 @@ export class AnimalForm implements OnInit {
   );
 
   constructor() {
+    // Quando a espécie muda: reseta raça, habilita/desabilita o select de raça.
+    this.form.controls.especie.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((especie) => {
+        const racaCtrl = this.form.controls.racaId;
+        racaCtrl.setValue(null);
+        if (especie) {
+          racaCtrl.enable();
+        } else {
+          racaCtrl.disable();
+        }
+      });
+
     // Adotante é obrigatório apenas quando o status é ADOTADO (espelha a regra do backend).
     this.form.controls.status.valueChanges
       .pipe(takeUntilDestroyed())
@@ -159,7 +186,7 @@ export class AnimalForm implements OnInit {
 
   private carregarRacas(): void {
     this.racaService.listar().subscribe({
-      next: (dados) => this.racas.set(dados),
+      next: (dados) => this.todasRacas.set(dados),
       error: (err) => this.notificar(mensagemDeErro(err)),
     });
   }
@@ -175,9 +202,11 @@ export class AnimalForm implements OnInit {
     this.carregando.set(true);
     this.animalService.buscarPorId(id).subscribe({
       next: (a) => {
+        const especieAnimal = (a.raca as Raca)?.especie?.nome ?? null;
         this.form.patchValue({
           nome: a.nome,
           idade: a.idade,
+          especie: especieAnimal,
           porte: a.porte,
           sexo: a.sexo,
           status: a.status,

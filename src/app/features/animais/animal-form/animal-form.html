@@ -38,15 +38,23 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+          <mat-label>Espécie</mat-label>
+          <mat-select formControlName="especie">
+            @for (opcao of especies; track opcao.value) {
+              <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.especie.hasError('required')) {
+            <mat-error>Selecione a espécie.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>Raça</mat-label>
-          <mat-select formControlName="racaId">
-            @for (raca of racas(); track raca.id) {
-              <mat-option [value]="raca.id">
-                {{ raca.nome }}
-                @if (raca.especie) {
-                  ({{ raca.especie.nome }})
-                }
-              </mat-option>
+          <mat-select formControlName="racaId"
+                      [placeholder]="form.controls.racaId.disabled ? 'Defina a espécie primeiro' : ''">
+            @for (raca of racasFiltradas(); track raca.id) {
+              <mat-option [value]="raca.id">{{ raca.nome }}</mat-option>
             }
           </mat-select>
           @if (form.controls.racaId.hasError('required')) {
