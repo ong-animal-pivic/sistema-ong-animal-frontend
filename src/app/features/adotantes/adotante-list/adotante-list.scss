@@ -78,7 +78,10 @@
 /* Barra de ferramentas (toggle de visão) */
 .barra-ferramentas {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 
   mat-button-toggle-group {
@@ -91,6 +94,77 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
+  }
+}
+
+/* Filtros / Pesquisa */
+.filtros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.pesquisa-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 320px;
+  width: 100%;
+
+  &__icone {
+    position: absolute;
+    left: 10px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--brand-muted);
+    pointer-events: none;
+  }
+}
+
+.pesquisa-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--brand-surface);
+  font: inherit;
+  font-size: 0.88rem;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder {
+    color: var(--brand-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 3px var(--brand-teal-soft);
+  }
+}
+
+.vazio-filtro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 24px;
+  color: var(--brand-muted);
+  text-align: center;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
   }
 }
 

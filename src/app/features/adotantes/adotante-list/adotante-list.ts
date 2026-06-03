@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +22,7 @@ const VISAO_KEY = 'adotantes:visao';
   selector: 'app-adotante-list',
   imports: [
     RouterLink,
+    FormsModule,
     MatTableModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -41,6 +43,17 @@ export class AdotanteList implements OnInit {
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
   readonly colunas = ['adotante', 'documento', 'cidade', 'contato', 'acoes'];
+
+  /* Filtro por nome */
+  readonly filtroPesquisa = signal('');
+
+  readonly adotantesFiltrados = computed(() => {
+    const termo = this.filtroPesquisa().trim().toLowerCase();
+    if (!termo) return this.adotantes();
+    return this.adotantes().filter((a) =>
+      a.nome?.toLowerCase().includes(termo),
+    );
+  });
 
   readonly total = computed(() => this.adotantes().length);
 

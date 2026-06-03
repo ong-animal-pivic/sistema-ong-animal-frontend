@@ -1,4 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +14,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AnimalService } from '../../../services/animal.service';
 import { Animal } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
-import { PORTE_LABELS, SEXO_LABELS, STATUS_LABELS } from '../../../models/enums';
+import {
+  AnimalEspecie,
+  AnimalStatus,
+  ANIMAL_ESPECIES,
+  ANIMAL_STATUS,
+  PORTE_LABELS,
+  SEXO_LABELS,
+  STATUS_LABELS,
+} from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { AnimalDeleteDialog } from '../animal-delete-dialog/animal-delete-dialog';
 
@@ -23,6 +33,8 @@ const VISAO_KEY = 'animais:visao';
   selector: 'app-animal-list',
   imports: [
     RouterLink,
+    MatFormFieldModule,
+    MatSelectModule,
     MatTableModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -43,6 +55,27 @@ export class AnimalList implements OnInit {
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
   readonly colunas = ['animal', 'especie', 'porte', 'status', 'acoes'];
+
+  /* Filtros */
+  readonly statusOptions = ANIMAL_STATUS;
+  readonly especieOptions = ANIMAL_ESPECIES;
+  readonly filtroStatus = signal<AnimalStatus | ''>('');
+  readonly filtroEspecie = signal<AnimalEspecie | ''>('');
+
+  readonly animaisFiltrados = computed(() => {
+    let lista = this.animais();
+    const status = this.filtroStatus();
+    const especie = this.filtroEspecie();
+    if (status) {
+      lista = lista.filter((a) => a.status === status);
+    }
+    if (especie) {
+      lista = lista.filter(
+        (a) => (a.raca as Raca)?.especie?.nome === especie,
+      );
+    }
+    return lista;
+  });
 
   readonly total = computed(() => this.animais().length);
   readonly disponiveis = computed(
