@@ -91,6 +91,21 @@ mat-form-field {
   width: 100%;
 }
 
+.campo-com-acao {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+
+  &__field {
+    flex: 1;
+  }
+}
+
+.btn-nova-raca {
+  margin-top: 8px;
+  color: var(--brand-coral-strong, #f0503f);
+}
+
 .col-2,
 .largura-total {
   grid-column: 1 / -1;

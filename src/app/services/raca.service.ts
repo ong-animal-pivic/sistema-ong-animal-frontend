@@ -12,4 +12,20 @@ export class RacaService {
   listar(): Observable<Raca[]> {
     return this.http.get<Raca[]>(this.baseUrl);
   }
+
+  buscarPorId(id: number): Observable<Raca> {
+    return this.http.get<Raca>(`${this.baseUrl}/${id}`);
+  }
+
+  salvar(raca: { nome: string; especie: { id: number } }): Observable<Raca> {
+    return this.http.post<Raca>(this.baseUrl, raca);
+  }
+
+  atualizar(id: number, raca: { nome: string; especie: { id: number } }): Observable<Raca> {
+    return this.http.put<Raca>(`${this.baseUrl}/${id}`, raca);
+  }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

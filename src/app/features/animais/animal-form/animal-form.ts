@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnimalService } from '../../../services/animal.service';
@@ -72,6 +73,7 @@ function filtrarCores(cores: string[], texto: string | null | undefined): string
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatTooltipModule,
   ],
   templateUrl: './animal-form.html',
   styleUrl: './animal-form.scss',
