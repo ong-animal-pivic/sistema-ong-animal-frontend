@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-animal-delete-dialog',
+  selector: 'app-adotante-delete-dialog',
   imports: [MatDialogModule, MatButtonModule, MatIconModule],
   template: `
     <div class="dialog">
@@ -68,6 +68,6 @@ import { MatIconModule } from '@angular/material/icon';
     `,
   ],
 })
-export class AnimalDeleteDialog {
+export class AdotanteDeleteDialog {
   readonly data = inject<{ nome: string }>(MAT_DIALOG_DATA);
 }

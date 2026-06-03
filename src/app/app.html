@@ -1,8 +1,26 @@
-<mat-toolbar color="primary">
-  <mat-icon>pets</mat-icon>
-  <span class="titulo">{{ title }}</span>
-</mat-toolbar>
+<header class="app-header">
+  <a class="brand" routerLink="/animais">
+    <span class="brand__mark">
+      <mat-icon>pets</mat-icon>
+    </span>
+    <span class="brand__text">
+      <span class="brand__name">{{ title }}</span>
+      <span class="brand__tag">Gestão de resgatados</span>
+    </span>
+  </a>
 
-<main>
+  <nav class="app-nav">
+    <a routerLink="/animais" routerLinkActive="ativo">
+      <mat-icon>pets</mat-icon>
+      <span>Animais</span>
+    </a>
+    <a routerLink="/adotantes" routerLinkActive="ativo">
+      <mat-icon>group</mat-icon>
+      <span>Adotantes</span>
+    </a>
+  </nav>
+</header>
+
+<main class="app-main">
   <router-outlet />
 </main>

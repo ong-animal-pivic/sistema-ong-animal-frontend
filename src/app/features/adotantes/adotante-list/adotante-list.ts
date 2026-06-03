@@ -9,18 +9,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { AnimalService } from '../../../services/animal.service';
-import { Animal } from '../../../models/animal.model';
-import { Raca } from '../../../models/raca.model';
-import { PORTE_LABELS, SEXO_LABELS, STATUS_LABELS } from '../../../models/enums';
+import { AdotanteService } from '../../../services/adotante.service';
+import { Adotante } from '../../../models/adotante.model';
 import { mensagemDeErro } from '../../../shared/erro';
-import { AnimalDeleteDialog } from '../animal-delete-dialog/animal-delete-dialog';
+import { AdotanteDeleteDialog } from '../adotante-delete-dialog/adotante-delete-dialog';
 
 type Visao = 'cards' | 'tabela';
-const VISAO_KEY = 'animais:visao';
+const VISAO_KEY = 'adotantes:visao';
 
 @Component({
-  selector: 'app-animal-list',
+  selector: 'app-adotante-list',
   imports: [
     RouterLink,
     MatTableModule,
@@ -31,26 +29,20 @@ const VISAO_KEY = 'animais:visao';
     MatTooltipModule,
     MatDialogModule,
   ],
-  templateUrl: './animal-list.html',
-  styleUrl: './animal-list.scss',
+  templateUrl: './adotante-list.html',
+  styleUrl: './adotante-list.scss',
 })
-export class AnimalList implements OnInit {
-  private readonly service = inject(AnimalService);
+export class AdotanteList implements OnInit {
+  private readonly service = inject(AdotanteService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly animais = signal<Animal[]>([]);
+  readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly colunas = ['animal', 'especie', 'porte', 'status', 'acoes'];
+  readonly colunas = ['adotante', 'documento', 'cidade', 'contato', 'acoes'];
 
-  readonly total = computed(() => this.animais().length);
-  readonly disponiveis = computed(
-    () => this.animais().filter((a) => a.status === 'DISPONIVEL').length,
-  );
-  readonly adotados = computed(
-    () => this.animais().filter((a) => a.status === 'ADOTADO').length,
-  );
+  readonly total = computed(() => this.adotantes().length);
 
   ngOnInit(): void {
     this.carregar();
@@ -65,36 +57,30 @@ export class AnimalList implements OnInit {
     return localStorage.getItem(VISAO_KEY) === 'tabela' ? 'tabela' : 'cards';
   }
 
-  rotuloPorte(animal: Animal): string {
-    return PORTE_LABELS[animal.porte] ?? animal.porte;
+  cpf(adotante: Adotante): string {
+    return adotante.documento?.cpf ?? '—';
   }
 
-  rotuloSexo(animal: Animal): string {
-    return SEXO_LABELS[animal.sexo] ?? animal.sexo;
+  cidade(adotante: Adotante): string {
+    const e = adotante.endereco;
+    if (!e?.cidade) return '—';
+    return e.estado ? `${e.cidade}/${e.estado}` : e.cidade;
   }
 
-  rotuloStatus(animal: Animal): string {
-    return STATUS_LABELS[animal.status] ?? animal.status;
+  telefone(adotante: Adotante): string {
+    return adotante.contato?.telefonePrincipal ?? '—';
   }
 
-  nomeRaca(animal: Animal): string {
-    return (animal.raca as Raca)?.nome ?? '—';
-  }
-
-  nomeEspecie(animal: Animal): string {
-    return (animal.raca as Raca)?.especie?.nome ?? '—';
-  }
-
-  /** Inicial do nome do animal para o avatar. */
-  inicial(animal: Animal): string {
-    return animal.nome?.trim().charAt(0).toUpperCase() || '?';
+  /** Inicial do nome do adotante para o avatar. */
+  inicial(adotante: Adotante): string {
+    return adotante.nome?.trim().charAt(0).toUpperCase() || '?';
   }
 
   carregar(): void {
     this.carregando.set(true);
     this.service.listar().subscribe({
       next: (dados) => {
-        this.animais.set(dados);
+        this.adotantes.set(dados);
         this.carregando.set(false);
       },
       error: (err) => {
@@ -104,20 +90,20 @@ export class AnimalList implements OnInit {
     });
   }
 
-  confirmarExclusao(animal: Animal): void {
-    const ref = this.dialog.open(AnimalDeleteDialog, {
-      data: { nome: animal.nome },
+  confirmarExclusao(adotante: Adotante): void {
+    const ref = this.dialog.open(AdotanteDeleteDialog, {
+      data: { nome: adotante.nome },
       width: '420px',
     });
     ref.afterClosed().subscribe((confirmado) => {
-      if (confirmado) this.excluir(animal);
+      if (confirmado) this.excluir(adotante);
     });
   }
 
-  private excluir(animal: Animal): void {
-    this.service.excluir(animal.id!).subscribe({
+  private excluir(adotante: Adotante): void {
+    this.service.excluir(adotante.id!).subscribe({
       next: () => {
-        this.notificar(`"${animal.nome}" foi excluído.`);
+        this.notificar(`"${adotante.nome}" foi excluído.`);
         this.carregar();
       },
       error: (err) => this.notificar(mensagemDeErro(err)),

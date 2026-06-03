@@ -115,48 +115,6 @@
   }
 }
 
-/* Badge de status */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px 4px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-  background: #f1f3f5;
-  color: var(--brand-muted);
-
-  &__ponto {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-
-  &--DISPONIVEL {
-    background: var(--brand-teal-soft);
-    color: var(--brand-teal-strong);
-  }
-  &--ADOTADO {
-    background: var(--brand-coral-soft);
-    color: var(--brand-coral-strong);
-  }
-  &--EM_TRATAMENTO {
-    background: #fff3da;
-    color: #b9791c;
-  }
-  &--QUARENTENA {
-    background: #ebe9fe;
-    color: #6155d6;
-  }
-  &--OBITO {
-    background: #eef0f2;
-    color: #6b7785;
-  }
-}
-
 /* Grade de cards */
 .grade {
   display: grid;
@@ -224,7 +182,7 @@
   }
 }
 
-/* Chips de características */
+/* Chips */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -246,11 +204,6 @@
     font-size: 14px;
     width: 14px;
     height: 14px;
-  }
-
-  &--ok {
-    background: var(--brand-teal-soft);
-    color: var(--brand-teal-strong);
   }
 }
 

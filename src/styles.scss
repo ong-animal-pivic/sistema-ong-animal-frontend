@@ -1,39 +1,80 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+// Tema do Angular Material (Material 3) + design system próprio da ONG.
+// O Material fornece a base dos componentes; as variáveis `--brand-*` abaixo
+// dão o acabamento "não genérico" (coral & teal) usado na UI customizada.
 @use '@angular/material' as mat;
 
 html {
   height: 100%;
+  color-scheme: light;
+
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: mat.$red-palette,
+        tertiary: mat.$cyan-palette,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: '"Plus Jakarta Sans", system-ui, sans-serif',
+        brand-family: '"Plus Jakarta Sans", system-ui, sans-serif',
+      ),
       density: 0,
     )
   );
+
+  // Tokens de marca — fonte única da verdade das cores da ONG.
+  --brand-coral: #ff6b5c;
+  --brand-coral-strong: #f0503f;
+  --brand-coral-soft: #ffeae6;
+  --brand-teal: #2ba9a0;
+  --brand-teal-strong: #1f8a82;
+  --brand-teal-soft: #d8f2ef;
+  --brand-ink: #1f2933;
+  --brand-muted: #6b7785;
+  --brand-bg: #fbfbfa;
+  --brand-surface: #ffffff;
+  --brand-border: #ecebe8;
+  --brand-radius: 18px;
+  --brand-radius-sm: 12px;
+  --brand-shadow: 0 1px 2px rgba(31, 41, 51, 0.04), 0 8px 24px -12px rgba(31, 41, 51, 0.18);
+  --brand-shadow-hover: 0 2px 4px rgba(31, 41, 51, 0.06), 0 16px 36px -14px rgba(31, 41, 51, 0.28);
+
+  // Realinha os tokens do Material 3 com a marca (botões, form fields, etc.).
+  --mat-sys-primary: var(--brand-coral);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: var(--brand-coral-soft);
+  --mat-sys-on-primary-container: #5a1c14;
+  --mat-sys-tertiary: var(--brand-teal);
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-tertiary-container: var(--brand-teal-soft);
+  --mat-sys-on-tertiary-container: #00322e;
+  --mat-sys-surface: var(--brand-surface);
+  --mat-sys-on-surface: var(--brand-ink);
+  --mat-sys-outline: var(--brand-border);
+  --mat-sys-corner-medium: var(--brand-radius-sm);
+  --mat-sys-corner-large: var(--brand-radius);
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
-  height: 100%;
+  min-height: 100%;
+  background-color: var(--brand-bg);
+  color: var(--brand-ink);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
-/* You can add global styles to this file, and also import other style files */
+
+// Ícones arredondados (Material Symbols Rounded) — visual mais suave/acolhedor.
+.material-symbols-rounded,
+mat-icon.mat-icon {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 500,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+// Snackbar com cantos arredondados, alinhada à marca.
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-shape: 14px;
+}

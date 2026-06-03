@@ -1,0 +1,225 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/adotantes">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  <div class="form-cabecalho">
+    <h1>{{ ehEdicao() ? 'Editar adotante' : 'Novo adotante' }}</h1>
+    <p>Preencha os dados do adotante. Campos com * são obrigatórios.</p>
+  </div>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="form">
+    <!-- Identificação -->
+    <fieldset class="bloco">
+      <legend class="bloco__titulo">
+        <mat-icon>badge</mat-icon>
+        Identificação
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline" class="col-2">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" maxlength="100" />
+          @if (form.controls.nome.hasError('required')) {
+            <mat-error>Informe o nome.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Data de nascimento</mat-label>
+          <input matInput [matDatepicker]="pickerNasc" formControlName="dataNascimento" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerNasc" />
+          <mat-datepicker #pickerNasc />
+          @if (form.controls.dataNascimento.hasError('required')) {
+            <mat-error>Informe a data de nascimento.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- Documento -->
+    <fieldset class="bloco" formGroupName="documento">
+      <legend class="bloco__titulo">
+        <mat-icon>fingerprint</mat-icon>
+        Documento
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline">
+          <mat-label>CPF</mat-label>
+          <input matInput formControlName="cpf" maxlength="11" placeholder="Somente números" />
+          @if (form.controls.documento.controls.cpf.hasError('required')) {
+            <mat-error>Informe o CPF.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>RG</mat-label>
+          <input matInput formControlName="rg" maxlength="20" />
+          @if (form.controls.documento.controls.rg.hasError('required')) {
+            <mat-error>Informe o RG.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Órgão emissor</mat-label>
+          <input matInput formControlName="orgaoRg" maxlength="10" />
+          @if (form.controls.documento.controls.orgaoRg.hasError('required')) {
+            <mat-error>Informe o órgão emissor.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- Contato -->
+    <fieldset class="bloco" formGroupName="contato">
+      <legend class="bloco__titulo">
+        <mat-icon>call</mat-icon>
+        Contato
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline">
+          <mat-label>Telefone principal</mat-label>
+          <input matInput formControlName="telefonePrincipal" maxlength="15" />
+          @if (form.controls.contato.controls.telefonePrincipal.hasError('required')) {
+            <mat-error>Informe o telefone principal.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Telefone secundário</mat-label>
+          <input matInput formControlName="telefoneSecundario" maxlength="15" />
+          @if (form.controls.contato.controls.telefoneSecundario.hasError('required')) {
+            <mat-error>Informe o telefone secundário.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>E-mail</mat-label>
+          <input matInput formControlName="email" maxlength="100" type="email" />
+          @if (form.controls.contato.controls.email.hasError('email')) {
+            <mat-error>E-mail inválido.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Instagram</mat-label>
+          <input matInput formControlName="instagram" maxlength="50" placeholder="@usuario" />
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- Endereço -->
+    <fieldset class="bloco" formGroupName="endereco">
+      <legend class="bloco__titulo">
+        <mat-icon>home</mat-icon>
+        Endereço
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline" class="col-2">
+          <mat-label>Logradouro</mat-label>
+          <input matInput formControlName="logradouro" maxlength="100" />
+          @if (form.controls.endereco.controls.logradouro.hasError('required')) {
+            <mat-error>Informe o logradouro.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Número</mat-label>
+          <input matInput formControlName="numero" maxlength="10" />
+          @if (form.controls.endereco.controls.numero.hasError('required')) {
+            <mat-error>Informe o número.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Complemento</mat-label>
+          <input matInput formControlName="complemento" maxlength="50" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Bairro</mat-label>
+          <input matInput formControlName="bairro" maxlength="50" />
+          @if (form.controls.endereco.controls.bairro.hasError('required')) {
+            <mat-error>Informe o bairro.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cidade</mat-label>
+          <input matInput formControlName="cidade" maxlength="50" />
+          @if (form.controls.endereco.controls.cidade.hasError('required')) {
+            <mat-error>Informe a cidade.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado (UF)</mat-label>
+          <input matInput formControlName="estado" maxlength="2" placeholder="SP" />
+          @if (form.controls.endereco.controls.estado.hasError('required')) {
+            <mat-error>Informe a UF.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>CEP</mat-label>
+          <input matInput formControlName="cep" maxlength="8" placeholder="Somente números" />
+          @if (form.controls.endereco.controls.cep.hasError('required')) {
+            <mat-error>Informe o CEP.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- Dados demográficos -->
+    <fieldset class="bloco" formGroupName="dadosDemograficos">
+      <legend class="bloco__titulo">
+        <mat-icon>insights</mat-icon>
+        Dados demográficos
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline">
+          <mat-label>Profissão</mat-label>
+          <input matInput formControlName="profissao" maxlength="50" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Renda mensal (R$)</mat-label>
+          <input matInput type="number" formControlName="rendaMensal" min="0" step="0.01" />
+          @if (form.controls.dadosDemograficos.controls.rendaMensal.hasError('min')) {
+            <mat-error>A renda não pode ser negativa.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado civil</mat-label>
+          <mat-select formControlName="estadoCivil">
+            @for (opcao of estadosCivis; track opcao.value) {
+              <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Escolaridade</mat-label>
+          <mat-select formControlName="escolaridade">
+            @for (opcao of escolaridades; track opcao.value) {
+              <mat-option [value]="opcao.value">{{ opcao.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <div class="form-acoes">
+      <button mat-stroked-button type="button" routerLink="/adotantes">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+        <mat-icon>{{ salvando() ? 'hourglass_top' : 'save' }}</mat-icon>
+        {{ salvando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</section>

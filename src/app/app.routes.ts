@@ -23,5 +23,26 @@ export const routes: Routes = [
         (m) => m.AnimalForm,
       ),
   },
+  {
+    path: 'adotantes',
+    loadComponent: () =>
+      import('./features/adotantes/adotante-list/adotante-list').then(
+        (m) => m.AdotanteList,
+      ),
+  },
+  {
+    path: 'adotantes/novo',
+    loadComponent: () =>
+      import('./features/adotantes/adotante-form/adotante-form').then(
+        (m) => m.AdotanteForm,
+      ),
+  },
+  {
+    path: 'adotantes/:id/editar',
+    loadComponent: () =>
+      import('./features/adotantes/adotante-form/adotante-form').then(
+        (m) => m.AdotanteForm,
+      ),
+  },
   { path: '**', redirectTo: 'animais' },
 ];

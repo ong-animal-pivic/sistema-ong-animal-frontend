@@ -18,8 +18,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnimalService } from '../../../services/animal.service';
 import { RacaService } from '../../../services/raca.service';
+import { AdotanteService } from '../../../services/adotante.service';
 import { Animal } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
+import { Adotante } from '../../../models/adotante.model';
 import {
   ANIMAL_PORTES,
   ANIMAL_SEXOS,
@@ -65,6 +67,7 @@ export class AnimalForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly animalService = inject(AnimalService);
   private readonly racaService = inject(RacaService);
+  private readonly adotanteService = inject(AdotanteService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
@@ -74,6 +77,7 @@ export class AnimalForm implements OnInit {
   readonly statusList = ANIMAL_STATUS;
 
   readonly racas = signal<Raca[]>([]);
+  readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly salvando = signal(false);
   readonly animalId = signal<number | null>(null);
@@ -117,6 +121,7 @@ export class AnimalForm implements OnInit {
 
   ngOnInit(): void {
     this.carregarRacas();
+    this.carregarAdotantes();
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -128,6 +133,13 @@ export class AnimalForm implements OnInit {
   private carregarRacas(): void {
     this.racaService.listar().subscribe({
       next: (dados) => this.racas.set(dados),
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
+  }
+
+  private carregarAdotantes(): void {
+    this.adotanteService.listar().subscribe({
+      next: (dados) => this.adotantes.set(dados),
       error: (err) => this.notificar(mensagemDeErro(err)),
     });
   }

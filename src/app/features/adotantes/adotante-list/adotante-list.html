@@ -1,28 +1,20 @@
 <section class="pagina">
   <div class="cabecalho">
     <div class="cabecalho__titulo">
-      <h1>Animais</h1>
-      <p>Acompanhe e gerencie todos os resgatados da ONG.</p>
+      <h1>Adotantes</h1>
+      <p>Cadastre e gerencie os adotantes da ONG.</p>
     </div>
-    <button mat-flat-button color="primary" class="btn-novo" routerLink="/animais/novo">
+    <button mat-flat-button color="primary" class="btn-novo" routerLink="/adotantes/novo">
       <mat-icon>add</mat-icon>
-      Novo animal
+      Novo adotante
     </button>
   </div>
 
   @if (!carregando() && total() > 0) {
     <div class="resumo">
-      <div class="resumo__item">
-        <span class="resumo__valor">{{ total() }}</span>
-        <span class="resumo__rotulo">Total</span>
-      </div>
       <div class="resumo__item resumo__item--teal">
-        <span class="resumo__valor">{{ disponiveis() }}</span>
-        <span class="resumo__rotulo">Disponíveis</span>
-      </div>
-      <div class="resumo__item resumo__item--coral">
-        <span class="resumo__valor">{{ adotados() }}</span>
-        <span class="resumo__rotulo">Adotados</span>
+        <span class="resumo__valor">{{ total() }}</span>
+        <span class="resumo__rotulo">Adotantes cadastrados</span>
       </div>
     </div>
   }
@@ -51,12 +43,12 @@
 
   @if (!carregando() && total() === 0) {
     <div class="vazio">
-      <span class="vazio__icone"><mat-icon>pets</mat-icon></span>
-      <h2>Nenhum animal cadastrado</h2>
-      <p>Comece adicionando o primeiro resgatado ao sistema.</p>
-      <button mat-flat-button color="primary" routerLink="/animais/novo">
+      <span class="vazio__icone"><mat-icon>person</mat-icon></span>
+      <h2>Nenhum adotante cadastrado</h2>
+      <p>Comece adicionando o primeiro adotante ao sistema.</p>
+      <button mat-flat-button color="primary" routerLink="/adotantes/novo">
         <mat-icon>add</mat-icon>
-        Cadastrar animal
+        Cadastrar adotante
       </button>
     </div>
   }
@@ -64,37 +56,24 @@
   <!-- Visão em cards -->
   @if (!carregando() && total() > 0 && visao() === 'cards') {
     <div class="grade">
-      @for (a of animais(); track a.id) {
+      @for (a of adotantes(); track a.id) {
         <article class="card">
           <div class="card__topo">
             <span class="avatar">{{ inicial(a) }}</span>
-            <span class="badge" [class]="'badge--' + a.status">
-              <span class="badge__ponto"></span>
-              {{ rotuloStatus(a) }}
-            </span>
           </div>
 
           <div class="card__corpo">
             <h3 class="card__nome">{{ a.nome }}</h3>
-            <p class="card__sub">{{ nomeEspecie(a) }} · {{ nomeRaca(a) }}</p>
+            <p class="card__sub">{{ cidade(a) }}</p>
 
             <div class="chips">
-              <span class="chip">{{ rotuloPorte(a) }}</span>
-              <span class="chip">{{ rotuloSexo(a) }}</span>
-              <span class="chip">{{ a.idade }} {{ a.idade === 1 ? 'ano' : 'anos' }}</span>
-              @if (a.castrado) {
-                <span class="chip chip--ok">
-                  <mat-icon>check</mat-icon> Castrado
-                </span>
-              }
+              <span class="chip"><mat-icon>badge</mat-icon> {{ cpf(a) }}</span>
+              <span class="chip"><mat-icon>call</mat-icon> {{ telefone(a) }}</span>
             </div>
           </div>
 
           <div class="card__acoes">
-            <button
-              mat-stroked-button
-              [routerLink]="['/animais', a.id, 'editar']"
-            >
+            <button mat-stroked-button [routerLink]="['/adotantes', a.id, 'editar']">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
@@ -115,38 +94,32 @@
   <!-- Visão em tabela -->
   @if (!carregando() && total() > 0 && visao() === 'tabela') {
     <div class="tabela-wrap">
-      <table mat-table [dataSource]="animais()" class="tabela">
-        <ng-container matColumnDef="animal">
-          <th mat-header-cell *matHeaderCellDef>Animal</th>
+      <table mat-table [dataSource]="adotantes()" class="tabela">
+        <ng-container matColumnDef="adotante">
+          <th mat-header-cell *matHeaderCellDef>Adotante</th>
           <td mat-cell *matCellDef="let a">
             <div class="celula-animal">
               <span class="avatar avatar--sm">{{ inicial(a) }}</span>
               <div>
                 <strong>{{ a.nome }}</strong>
-                <small>{{ nomeRaca(a) }}</small>
               </div>
             </div>
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="especie">
-          <th mat-header-cell *matHeaderCellDef>Espécie</th>
-          <td mat-cell *matCellDef="let a">{{ nomeEspecie(a) }}</td>
+        <ng-container matColumnDef="documento">
+          <th mat-header-cell *matHeaderCellDef>CPF</th>
+          <td mat-cell *matCellDef="let a">{{ cpf(a) }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="porte">
-          <th mat-header-cell *matHeaderCellDef>Porte</th>
-          <td mat-cell *matCellDef="let a">{{ rotuloPorte(a) }}</td>
+        <ng-container matColumnDef="cidade">
+          <th mat-header-cell *matHeaderCellDef>Cidade</th>
+          <td mat-cell *matCellDef="let a">{{ cidade(a) }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let a">
-            <span class="badge" [class]="'badge--' + a.status">
-              <span class="badge__ponto"></span>
-              {{ rotuloStatus(a) }}
-            </span>
-          </td>
+        <ng-container matColumnDef="contato">
+          <th mat-header-cell *matHeaderCellDef>Telefone</th>
+          <td mat-cell *matCellDef="let a">{{ telefone(a) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="acoes">
@@ -155,7 +128,7 @@
             <button
               mat-icon-button
               matTooltip="Editar"
-              [routerLink]="['/animais', a.id, 'editar']"
+              [routerLink]="['/adotantes', a.id, 'editar']"
             >
               <mat-icon>edit</mat-icon>
             </button>
