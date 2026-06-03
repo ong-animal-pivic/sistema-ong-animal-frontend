@@ -36,6 +36,8 @@
           <mat-datepicker #pickerNasc />
           @if (form.controls.dataNascimento.hasError('required')) {
             <mat-error>Informe a data de nascimento.</mat-error>
+          } @else if (form.controls.dataNascimento.hasError('menorDeIdade')) {
+            <mat-error>O adotante deve ter pelo menos 18 anos de idade.</mat-error>
           }
         </mat-form-field>
       </div>
@@ -53,6 +55,8 @@
           <input matInput formControlName="cpf" maxlength="11" placeholder="Somente números" />
           @if (form.controls.documento.controls.cpf.hasError('required')) {
             <mat-error>Informe o CPF.</mat-error>
+          } @else if (form.controls.documento.controls.cpf.hasError('cpfInvalido')) {
+            <mat-error>O CPF informado é inválido. Verifique os dígitos e tente novamente.</mat-error>
           }
         </mat-form-field>
 

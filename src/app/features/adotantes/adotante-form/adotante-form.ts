@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AdotanteService } from '../../../services/adotante.service';
 import { Adotante } from '../../../models/adotante.model';
+import { cpfValidator, idadeMinimaValidator } from '../../../shared/validators';
 import {
   ESTADOS_CIVIS,
   ESCOLARIDADES,
@@ -67,9 +68,9 @@ export class AdotanteForm implements OnInit {
 
   readonly form = this.fb.group({
     nome: ['', [Validators.required, Validators.maxLength(100)]],
-    dataNascimento: [null as Date | null, Validators.required],
+    dataNascimento: [null as Date | null, [Validators.required, idadeMinimaValidator(18)]],
     documento: this.fb.group({
-      cpf: ['', [Validators.required, Validators.maxLength(11)]],
+      cpf: ['', [Validators.required, Validators.maxLength(11), cpfValidator()]],
       rg: ['', [Validators.required, Validators.maxLength(20)]],
       orgaoRg: ['', [Validators.required, Validators.maxLength(10)]],
     }),
