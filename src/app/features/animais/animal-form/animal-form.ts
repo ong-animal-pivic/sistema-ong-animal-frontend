@@ -5,10 +5,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +30,8 @@ import {
   AnimalPorte,
   AnimalSexo,
   AnimalStatus,
+  CORES_PELAGEM,
+  CORES_OLHOS,
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 
@@ -46,6 +49,13 @@ function paraData(iso: string | null | undefined): Date | null {
   return iso ? new Date(`${iso}T00:00:00`) : null;
 }
 
+/** Filtra a lista de cores pelo texto digitado (case-insensitive); vazio mostra tudo. */
+function filtrarCores(cores: string[], texto: string | null | undefined): string[] {
+  const termo = (texto ?? '').trim().toLowerCase();
+  if (!termo) return cores;
+  return cores.filter((cor) => cor.toLowerCase().includes(termo));
+}
+
 @Component({
   selector: 'app-animal-form',
   imports: [
@@ -54,6 +64,7 @@ function paraData(iso: string | null | undefined): Date | null {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatAutocompleteModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatButtonModule,
@@ -98,6 +109,22 @@ export class AnimalForm implements OnInit {
     racaId: [null as number | null, Validators.required],
     adotanteId: [null as number | null],
   });
+
+  // Sugestões filtradas pelo texto digitado (autocomplete); aceita valores fora da lista.
+  private readonly corOlhosDigitada = toSignal(
+    this.form.controls.corOlhos.valueChanges,
+    { initialValue: this.form.controls.corOlhos.value },
+  );
+  private readonly corPelagemDigitada = toSignal(
+    this.form.controls.corPelagem.valueChanges,
+    { initialValue: this.form.controls.corPelagem.value },
+  );
+  readonly coresOlhosFiltradas = computed(() =>
+    filtrarCores(CORES_OLHOS, this.corOlhosDigitada()),
+  );
+  readonly coresPelagemFiltradas = computed(() =>
+    filtrarCores(CORES_PELAGEM, this.corPelagemDigitada()),
+  );
 
   constructor() {
     // Adotante é obrigatório apenas quando o status é ADOTADO (espelha a regra do backend).

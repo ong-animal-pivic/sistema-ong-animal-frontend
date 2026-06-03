@@ -89,12 +89,32 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Cor dos olhos</mat-label>
-          <input matInput formControlName="corOlhos" maxlength="20" />
+          <input
+            matInput
+            formControlName="corOlhos"
+            maxlength="20"
+            [matAutocomplete]="autoOlhos"
+          />
+          <mat-autocomplete #autoOlhos="matAutocomplete">
+            @for (cor of coresOlhosFiltradas(); track cor) {
+              <mat-option [value]="cor">{{ cor }}</mat-option>
+            }
+          </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Cor da pelagem</mat-label>
-          <input matInput formControlName="corPelagem" maxlength="20" />
+          <input
+            matInput
+            formControlName="corPelagem"
+            maxlength="20"
+            [matAutocomplete]="autoPelagem"
+          />
+          <mat-autocomplete #autoPelagem="matAutocomplete">
+            @for (cor of coresPelagemFiltradas(); track cor) {
+              <mat-option [value]="cor">{{ cor }}</mat-option>
+            }
+          </mat-autocomplete>
         </mat-form-field>
 
         <div class="col-2 toggle-castrado">

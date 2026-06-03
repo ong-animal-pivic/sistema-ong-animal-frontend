@@ -97,3 +97,27 @@ export const ESCOLARIDADE_LABELS: Record<Escolaridade, string> =
   Object.fromEntries(
     ESCOLARIDADES.map((o) => [o.value, o.label]),
   ) as Record<Escolaridade, string>;
+
+// --- Cores (texto livre com sugestões; espelham o limite length=20 do backend) ---
+
+export const CORES_PELAGEM: string[] = [
+  'Preto',
+  'Branco',
+  'Caramelo',
+  'Marrom',
+  'Cinza',
+  'Tigrado',
+  'Malhado',
+  'Tricolor',
+  'Dourado',
+];
+
+export const CORES_OLHOS: string[] = [
+  'Castanho',
+  'Mel',
+  'Azul',
+  'Verde',
+  'Âmbar',
+  'Preto',
+  'Heterocromia',
+];
