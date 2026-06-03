@@ -157,10 +157,13 @@ export class AnimalForm implements OnInit {
       });
 
     // Adotante é obrigatório apenas quando o status é ADOTADO (espelha a regra do backend).
+    // Data de saída é obrigatória quando o status é ADOTADO ou OBITO.
     this.form.controls.status.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((status) => {
         const adotante = this.form.controls.adotanteId;
+        const dataSaida = this.form.controls.dataSaida;
+
         if (status === 'ADOTADO') {
           adotante.addValidators(Validators.required);
         } else {
@@ -168,11 +171,22 @@ export class AnimalForm implements OnInit {
           adotante.setValue(null);
         }
         adotante.updateValueAndValidity();
+
+        if (status === 'ADOTADO' || status === 'OBITO') {
+          dataSaida.addValidators(Validators.required);
+        } else {
+          dataSaida.removeValidators(Validators.required);
+        }
+        dataSaida.updateValueAndValidity();
       });
   }
 
   get ehAdotado(): boolean {
     return this.form.controls.status.value === 'ADOTADO';
+  }
+
+  get ehObito(): boolean {
+    return this.form.controls.status.value === 'OBITO';
   }
 
   ngOnInit(): void {

@@ -181,10 +181,16 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Data de saída</mat-label>
+          <mat-label>Data de saída{{ (ehAdotado || ehObito) ? ' *' : '' }}</mat-label>
           <input matInput [matDatepicker]="pickerSaida" formControlName="dataSaida" />
           <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
           <mat-datepicker #pickerSaida />
+          @if (ehAdotado || ehObito) {
+            <mat-hint>Obrigatório quando o status é "Adotado" ou "Óbito".</mat-hint>
+          }
+          @if (form.controls.dataSaida.hasError('required')) {
+            <mat-error>Informe a data de saída.</mat-error>
+          }
         </mat-form-field>
       </div>
     </fieldset>
