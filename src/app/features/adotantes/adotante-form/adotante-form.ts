@@ -68,7 +68,7 @@ export class AdotanteForm implements OnInit {
 
   readonly form = this.fb.group({
     nome: ['', [Validators.required, Validators.maxLength(100)]],
-    dataNascimento: [null as Date | null, [Validators.required, idadeMinimaValidator(18)]],
+    dataNascimento: [null as Date | null, [Validators.required, idadeMinimaValidator(21)]],
     documento: this.fb.group({
       cpf: ['', [Validators.required, Validators.maxLength(11), cpfValidator()]],
       rg: ['', [Validators.required, Validators.maxLength(20)]],
