@@ -34,6 +34,7 @@ import {
   CORES_OLHOS,
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { formatarIdade } from '../../../shared/idade';
 
 /** Converte um Date para string ISO `yyyy-MM-dd` no fuso local (sem deslocar o dia). */
 function paraIso(data: Date | null): string | null {
@@ -125,6 +126,17 @@ export class AnimalForm implements OnInit {
   readonly coresPelagemFiltradas = computed(() =>
     filtrarCores(CORES_PELAGEM, this.corPelagemDigitada()),
   );
+
+  // Hint de conversão meses→anos, atualizado em tempo real conforme o usuário digita.
+  private readonly idadeMesesDigitada = toSignal(
+    this.form.controls.idadeMeses.valueChanges,
+    { initialValue: this.form.controls.idadeMeses.value },
+  );
+  readonly idadeConvertida = computed(() => {
+    const meses = this.idadeMesesDigitada();
+    if (meses == null || meses < 12) return null;
+    return formatarIdade(meses);
+  });
 
   constructor() {
     // Adotante é obrigatório apenas quando o status é ADOTADO (espelha a regra do backend).

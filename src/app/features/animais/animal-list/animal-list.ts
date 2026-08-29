@@ -14,6 +14,7 @@ import { Animal } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
 import { PORTE_LABELS, SEXO_LABELS, STATUS_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { formatarIdade } from '../../../shared/idade';
 import { AnimalDeleteDialog } from '../animal-delete-dialog/animal-delete-dialog';
 
 type Visao = 'cards' | 'tabela';
@@ -90,19 +91,8 @@ export class AnimalList implements OnInit {
     return animal.nome?.trim().charAt(0).toUpperCase() || '?';
   }
 
-  /** Formata `idadeMeses` como "N meses", "N anos" ou "N anos e M meses". */
   rotuloIdade(animal: Animal): string {
-    const totalMeses = animal.idadeMeses;
-    const anos = Math.floor(totalMeses / 12);
-    const meses = totalMeses % 12;
-
-    if (anos === 0) {
-      return `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
-    }
-    if (meses === 0) {
-      return `${anos} ${anos === 1 ? 'ano' : 'anos'}`;
-    }
-    return `${anos} ${anos === 1 ? 'ano' : 'anos'} e ${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+    return formatarIdade(animal.idadeMeses);
   }
 
   carregar(): void {
