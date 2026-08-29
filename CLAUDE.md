@@ -18,11 +18,26 @@ npx vitest run src/app/app.spec.ts   # roda um único arquivo de teste
 
 O runner de teste é **Vitest** (não Karma/Jasmine), integrado via `@angular/build:unit-test` no `angular.json`. Os arquivos usam a API estilo Jasmine (`describe`/`it`/`expect`) que o Vitest expõe.
 
+## Como rodar o projeto completo (frontend + backend)
+
+Os dois repositórios vivem lado a lado em `C:\Users\acorreia3\Downloads\pivic\`:
+`sistema-ong-animal-frontend\` (este) e `sistema-ong-animal\` (backend).
+
+1. **PostgreSQL** precisa estar rodando e escutando na porta configurada em
+   `sistema-ong-animal\src\main\resources\application-local.properties`
+   (atualmente **5433**, não a porta padrão 5432 — confira antes de assumir que o Postgres "não está rodando").
+   O banco (`sistema-ong`), usuário e senha desse arquivo precisam existir no Postgres local.
+2. **Backend**: a partir de `sistema-ong-animal\`, rode `mvnw.cmd spring-boot:run` (Windows) — sobe em `http://localhost:8080`.
+   As migrações Flyway rodam automaticamente no startup; se o schema já existir, ele só valida.
+3. **Frontend**: a partir deste diretório, `npm install` seguido de `npm start` — sobe em `http://localhost:4200`.
+
+Suba o backend **antes** do frontend (ou pelo menos antes de usar as telas), já que não há retry automático — uma tela aberta antes do backend subir só mostra o erro após a primeira requisição.
+
 ## Backend / configuração
 
 - A URL da API fica em `src/environments/environment.ts` (`apiUrl`, padrão `http://localhost:8080`). É o único ponto de configuração do backend.
 - Não há proxy nem interceptors HTTP; cada service monta sua própria URL a partir de `environment.apiUrl`.
-- Erro de conexão (`status === 0`) é tratado como "backend não está rodando" em `mensagemDeErro`.
+- Erro de conexão (`status === 0`) é tratado como "backend não está rodando" em `mensagemDeErro` — mas essa mensagem também aparece se o backend está de pé só que o Postgres não, então confira os dois antes de assumir qual dos dois está fora do ar.
 
 ## Arquitetura
 
@@ -38,7 +53,7 @@ Fluxo de dados de cada tela: **componente standalone → service (`inject(HttpCl
 ### Convenções importantes (espelham o contrato do backend)
 
 - **Enums** (`models/enums.ts`): valores trafegam em MAIÚSCULAS (`DISPONIVEL`, `MACHO`, `PEQUENO`). Cada enum tem uma lista `Opcao<T>[]` para `<mat-select>` e um `*_LABELS` (Record) para exibição. Sempre adicione novos valores nos dois lugares.
-- **Relações** (`Animal.raca`, `Animal.adotante`): nas respostas de leitura vêm como objetos completos; ao enviar (POST/PUT) manda-se apenas `{ id }`. O `AnimalForm.salvar()` faz essa conversão.
+- **Relações** (`Animal.raca`, `Animal.adotante`): nas respostas de leitura (`Animal`) vêm como objetos completos; ao enviar (POST/PUT) o backend espera os ids como campos escalares na raiz do payload (`racaId`, `adotanteId`), não como objeto aninhado `{ id }` — por isso o corpo de escrita usa um tipo próprio, `AnimalPayload` (em `models/animal.model.ts`), distinto de `Animal`. O `AnimalForm.salvar()` monta esse `AnimalPayload` a partir do form.
 - **Datas**: a API usa string ISO `yyyy-MM-dd`. `AnimalForm` converte para/de `Date` com `paraIso`/`paraData`, construindo no fuso local (`T00:00:00`) para não deslocar o dia.
 - **Regra de validação condicional**: `adotante` é obrigatório apenas quando `status === 'ADOTADO'` — implementado via `valueChanges` no form, espelhando a regra do backend.
 
@@ -52,12 +67,13 @@ Fluxo de dados de cada tela: **componente standalone → service (`inject(HttpCl
 
 ## Backend (Spring Boot)
 
-A API consumida vive em **repositório separado**: `C:\Users\acorreia3\Downloads\sistema-ong-animal\sistema-ong-animal` (tem seu próprio `CLAUDE.md` mais detalhado). Stack: **Spring Boot 3.5 / Java 17 / PostgreSQL / Flyway**, pacote `com.umc.sistemaonganimal`.
+A API consumida vive em **repositório separado**: `C:\Users\acorreia3\Downloads\pivic\sistema-ong-animal` (tem seu próprio `CLAUDE.md` mais detalhado). Stack: **Spring Boot 3.5 / Java 21 / PostgreSQL / Flyway**, pacote `com.umc.sistemaonganimal`.
 
 O que importa para o frontend:
 
-- **Sem DTOs**: os controllers usam as **entidades JPA diretamente** como request/response. Por isso os modelos em `src/app/models/` espelham 1:1 as entidades do backend — ao mudar uma entidade ou enum lá, atualize o modelo aqui (e vice-versa).
-- **Associações** (`raca`, `adotante`, `especie`): o backend valida apenas o `id` da entidade aninhada (via grupos de validação), então enviar `{ id }` basta no POST/PUT — exatamente o que `AnimalForm.salvar()` faz.
+- **DTOs**: os controllers usam `api.dto.request`/`api.dto.response` (ex.: `AnimalRequestDTO`/`AnimalResponseDTO`), não as entidades JPA diretamente. Os modelos em `src/app/models/` devem espelhar o contrato desses DTOs — ao mudar um DTO, enum ou entidade lá, atualize o modelo aqui (e vice-versa).
+- **Associações** (`raca`, `adotante`, `especie`): desde a introdução dos DTOs de request (`AnimalRequestDTO`, `RacaRequestDTO`), o backend espera o id da entidade associada como campo escalar direto no payload (`racaId`, `adotanteId`, `especieId`), não mais como objeto aninhado `{ id }` — é o que `AnimalForm.salvar()` envia via `AnimalPayload`. Enviar `{ id }` para esses campos falha silenciosamente: o Jackson ignora a chave desconhecida e o campo escalar chega `null`, disparando erro de validação `@NotNull` só no lado do bind, não do JSON parsing.
+- **Raça e Espécie**: o backend já tem DTOs e CRUD completo para Raça (`GET/POST/PUT/DELETE /racas`, contrato `RacaRequestDTO`/`RacaResponseDTO`) e endpoints só de leitura para Espécie (`GET /especies`). O frontend ainda não tem telas próprias para nenhum dos dois — `RacaService` só implementa `listar()`, usado para popular o dropdown de raça no `AnimalForm`, e não há `EspecieService`.
 - **Erros** seguem RFC 7807 `ProblemDetail`; validações retornam um mapa `detalhes` campo→mensagem, lido em `src/app/shared/erro.ts`.
 - **Regra de adotante**: o `AnimalService` do backend só exige/resolve o `Adotante` quando `status == ADOTADO`. O form espelha isso tornando `adotanteId` obrigatório só nesse status.
 - **CORS**: o backend libera `http://localhost:4200` em dev (`CorsConfig`). Se mudar a porta do `ng serve`, ajuste lá também.

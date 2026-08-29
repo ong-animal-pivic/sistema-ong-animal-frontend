@@ -20,7 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AnimalService } from '../../../services/animal.service';
 import { RacaService } from '../../../services/raca.service';
 import { AdotanteService } from '../../../services/adotante.service';
-import { Animal } from '../../../models/animal.model';
+import { AnimalPayload } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
 import { Adotante } from '../../../models/adotante.model';
 import {
@@ -206,7 +206,7 @@ export class AnimalForm implements OnInit {
     }
 
     const v = this.form.getRawValue();
-    const payload: Animal = {
+    const payload: AnimalPayload = {
       nome: v.nome!,
       idade: v.idade!,
       porte: v.porte!,
@@ -218,9 +218,8 @@ export class AnimalForm implements OnInit {
       corOlhos: v.corOlhos || null,
       corPelagem: v.corPelagem || null,
       observacao: v.observacao || null,
-      raca: { id: v.racaId! },
-      adotante:
-        v.status === 'ADOTADO' && v.adotanteId ? { id: v.adotanteId } : null,
+      racaId: v.racaId!,
+      adotanteId: v.status === 'ADOTADO' && v.adotanteId ? v.adotanteId : null,
     };
 
     this.salvando.set(true);
