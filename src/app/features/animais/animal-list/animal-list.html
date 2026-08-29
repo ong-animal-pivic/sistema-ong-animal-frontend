@@ -81,7 +81,7 @@
             <div class="chips">
               <span class="chip">{{ rotuloPorte(a) }}</span>
               <span class="chip">{{ rotuloSexo(a) }}</span>
-              <span class="chip">{{ a.idade }} {{ a.idade === 1 ? 'ano' : 'anos' }}</span>
+              <span class="chip">{{ rotuloIdade(a) }}</span>
               @if (a.castrado) {
                 <span class="chip chip--ok">
                   <mat-icon>check</mat-icon> Castrado

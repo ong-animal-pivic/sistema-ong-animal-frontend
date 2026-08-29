@@ -9,7 +9,7 @@ import { Adotante } from './adotante.model';
 export interface Animal {
   id?: number;
   nome: string;
-  idade: number;
+  idadeMeses: number;
   porte: AnimalPorte;
   sexo: AnimalSexo;
   status: AnimalStatus;
@@ -29,7 +29,7 @@ export interface Animal {
  */
 export interface AnimalPayload {
   nome: string;
-  idade: number;
+  idadeMeses: number;
   porte: AnimalPorte;
   sexo: AnimalSexo;
   status: AnimalStatus;

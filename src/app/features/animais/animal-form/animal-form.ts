@@ -96,7 +96,7 @@ export class AnimalForm implements OnInit {
 
   readonly form = this.fb.group({
     nome: ['', [Validators.required, Validators.maxLength(50)]],
-    idade: [0, [Validators.required, Validators.min(0)]],
+    idadeMeses: [0, [Validators.required, Validators.min(0)]],
     porte: [null as AnimalPorte | null, Validators.required],
     sexo: [null as AnimalSexo | null, Validators.required],
     status: ['DISPONIVEL' as AnimalStatus, Validators.required],
@@ -177,7 +177,7 @@ export class AnimalForm implements OnInit {
       next: (a) => {
         this.form.patchValue({
           nome: a.nome,
-          idade: a.idade,
+          idadeMeses: a.idadeMeses,
           porte: a.porte,
           sexo: a.sexo,
           status: a.status,
@@ -208,7 +208,7 @@ export class AnimalForm implements OnInit {
     const v = this.form.getRawValue();
     const payload: AnimalPayload = {
       nome: v.nome!,
-      idade: v.idade!,
+      idadeMeses: v.idadeMeses!,
       porte: v.porte!,
       sexo: v.sexo!,
       status: v.status!,

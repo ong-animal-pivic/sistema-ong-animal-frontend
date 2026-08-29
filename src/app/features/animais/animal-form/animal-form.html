@@ -30,9 +30,9 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Idade (anos)</mat-label>
-          <input matInput type="number" formControlName="idade" min="0" />
-          @if (form.controls.idade.hasError('min')) {
+          <mat-label>Idade (meses)</mat-label>
+          <input matInput type="number" formControlName="idadeMeses" min="0" />
+          @if (form.controls.idadeMeses.hasError('min')) {
             <mat-error>A idade não pode ser negativa.</mat-error>
           }
         </mat-form-field>

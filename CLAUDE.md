@@ -81,6 +81,10 @@ O que importa para o frontend:
 
 Apenas o **CRUD de Animais** está implementado nos dois lados como padrão de referência; Adotante, Espécie e Raça devem replicá-lo.
 
+## Mensagens de commit
+
+Após concluir qualquer alteração concreta no código, sugira ao final da resposta a mensagem de commit a ser usada, seguindo o padrão de **commit semântico** (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, etc.). Apenas sugira o texto — **não execute o commit**, a menos que o usuário peça explicitamente.
+
 ## Notas
 
 - `app.spec.ts` ainda contém o teste boilerplate do Angular CLI (procura "Hello, sistema-ong-animal-frontend") — não reflete a UI atual; ajuste ao mexer em `App`.
