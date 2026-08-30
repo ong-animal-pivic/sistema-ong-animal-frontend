@@ -13,6 +13,7 @@ import { AdotanteService } from '../../../services/adotante.service';
 import { Adotante } from '../../../models/adotante.model';
 import { mensagemDeErro } from '../../../shared/erro';
 import { AdotanteDeleteDialog } from '../adotante-delete-dialog/adotante-delete-dialog';
+import { formatarCpf, formatarTelefone } from '../../../shared/mascara';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'adotantes:visao';
@@ -58,7 +59,7 @@ export class AdotanteList implements OnInit {
   }
 
   cpf(adotante: Adotante): string {
-    return adotante.documento?.cpf ?? '—';
+    return adotante.documento?.cpf ? formatarCpf(adotante.documento.cpf) : '—';
   }
 
   cidade(adotante: Adotante): string {
@@ -68,7 +69,9 @@ export class AdotanteList implements OnInit {
   }
 
   telefone(adotante: Adotante): string {
-    return adotante.contato?.telefonePrincipal ?? '—';
+    return adotante.contato?.telefonePrincipal
+      ? formatarTelefone(adotante.contato.telefonePrincipal)
+      : '—';
   }
 
   /** Inicial do nome do adotante para o avatar. */

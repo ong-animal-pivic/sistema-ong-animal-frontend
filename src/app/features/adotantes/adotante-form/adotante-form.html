@@ -50,7 +50,7 @@
       <div class="grade">
         <mat-form-field appearance="outline">
           <mat-label>CPF</mat-label>
-          <input matInput formControlName="cpf" maxlength="11" placeholder="Somente números" />
+          <input matInput formControlName="cpf" appMascara="cpf" />
           @if (form.controls.documento.controls.cpf.hasError('required')) {
             <mat-error>Informe o CPF.</mat-error>
           }
@@ -58,7 +58,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>RG</mat-label>
-          <input matInput formControlName="rg" maxlength="20" />
+          <input matInput formControlName="rg" appMascara="rg" />
           @if (form.controls.documento.controls.rg.hasError('required')) {
             <mat-error>Informe o RG.</mat-error>
           }
@@ -83,7 +83,7 @@
       <div class="grade">
         <mat-form-field appearance="outline">
           <mat-label>Telefone principal</mat-label>
-          <input matInput formControlName="telefonePrincipal" maxlength="15" />
+          <input matInput formControlName="telefonePrincipal" appMascara="telefone" />
           @if (form.controls.contato.controls.telefonePrincipal.hasError('required')) {
             <mat-error>Informe o telefone principal.</mat-error>
           }
@@ -91,7 +91,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Telefone secundário</mat-label>
-          <input matInput formControlName="telefoneSecundario" maxlength="15" />
+          <input matInput formControlName="telefoneSecundario" appMascara="telefone" />
           @if (form.controls.contato.controls.telefoneSecundario.hasError('required')) {
             <mat-error>Informe o telefone secundário.</mat-error>
           }
@@ -166,7 +166,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>CEP</mat-label>
-          <input matInput formControlName="cep" maxlength="8" placeholder="Somente números" />
+          <input matInput formControlName="cep" appMascara="cep" />
           @if (form.controls.endereco.controls.cep.hasError('required')) {
             <mat-error>Informe o CEP.</mat-error>
           }
