@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,6 +34,16 @@ function paraIso(data: Date | null): string | null {
 function paraData(iso: string | null | undefined): Date | null {
   return iso ? new Date(`${iso}T00:00:00`) : null;
 }
+
+/** Impede que telefone principal e telefone secundário sejam iguais. */
+const telefonesDiferentesValidator: ValidatorFn = (grupo: AbstractControl): ValidationErrors | null => {
+  const principal = grupo.get('telefonePrincipal')?.value;
+  const secundario = grupo.get('telefoneSecundario')?.value;
+  if (principal && secundario && principal === secundario) {
+    return { telefonesIguais: true };
+  }
+  return null;
+};
 
 @Component({
   selector: 'app-adotante-form',
@@ -75,12 +85,15 @@ export class AdotanteForm implements OnInit {
       rg: ['', [Validators.required, Validators.maxLength(20)]],
       orgaoRg: ['', [Validators.required, Validators.maxLength(10)]],
     }),
-    contato: this.fb.group({
-      telefonePrincipal: ['', [Validators.required, Validators.maxLength(15)]],
-      telefoneSecundario: ['', [Validators.required, Validators.maxLength(15)]],
-      email: ['', [Validators.email, Validators.maxLength(100)]],
-      instagram: ['', Validators.maxLength(50)],
-    }),
+    contato: this.fb.group(
+      {
+        telefonePrincipal: ['', [Validators.required, Validators.maxLength(15)]],
+        telefoneSecundario: ['', [Validators.required, Validators.maxLength(15)]],
+        email: ['', [Validators.email, Validators.maxLength(100)]],
+        instagram: ['', Validators.maxLength(50)],
+      },
+      { validators: telefonesDiferentesValidator },
+    ),
     endereco: this.fb.group({
       logradouro: ['', [Validators.required, Validators.maxLength(100)]],
       numero: ['', [Validators.required, Validators.maxLength(10)]],

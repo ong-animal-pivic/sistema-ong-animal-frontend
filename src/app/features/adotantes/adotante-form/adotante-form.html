@@ -94,6 +94,8 @@
           <input matInput formControlName="telefoneSecundario" appMascara="telefone" />
           @if (form.controls.contato.controls.telefoneSecundario.hasError('required')) {
             <mat-error>Informe o telefone secundário.</mat-error>
+          } @else if (form.controls.contato.hasError('telefonesIguais') && form.controls.contato.controls.telefoneSecundario.touched) {
+            <mat-error>O telefone secundário deve ser diferente do telefone principal.</mat-error>
           }
         </mat-form-field>
 
