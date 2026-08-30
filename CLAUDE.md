@@ -45,8 +45,8 @@ Fluxo de dados de cada tela: **componente standalone → service (`inject(HttpCl
 
 - `src/app/app.config.ts` — providers raiz: router, `provideHttpClient()`, date adapter nativo e `MAT_DATE_LOCALE: 'pt-BR'`.
 - `src/app/app.routes.ts` — rotas com `loadComponent` (lazy). O form de criar e editar reusa o mesmo componente `AnimalForm`; a presença do param `:id` distingue os modos.
-- `src/app/features/animais/` — telas: `animal-list` (tabela Material + diálogo de exclusão), `animal-form` (criar/editar), `animal-delete-dialog` (confirmação inline).
-- `src/app/services/` — wrappers HTTP por recurso (`AnimalService`, `RacaService`).
+- `src/app/features/animais/`, `src/app/features/adotantes/` e `src/app/features/racas/` — telas por entidade: `*-list` (tabela Material + diálogo de exclusão), `*-form` (criar/editar), `*-delete-dialog` (confirmação inline).
+- `src/app/services/` — wrappers HTTP por recurso (`AnimalService`, `AdotanteService`, `RacaService` com CRUD completo, `EspecieService` só leitura).
 - `src/app/models/` — interfaces que **espelham o backend**; ver convenções abaixo.
 - `src/app/shared/erro.ts` — `mensagemDeErro(err)` traduz `HttpErrorResponse` para texto exibível, lendo o padrão `ProblemDetail` (RFC 7807) da API.
 
@@ -73,13 +73,13 @@ O que importa para o frontend:
 
 - **DTOs**: os controllers usam `api.dto.request`/`api.dto.response` (ex.: `AnimalRequestDTO`/`AnimalResponseDTO`), não as entidades JPA diretamente. Os modelos em `src/app/models/` devem espelhar o contrato desses DTOs — ao mudar um DTO, enum ou entidade lá, atualize o modelo aqui (e vice-versa).
 - **Associações** (`raca`, `adotante`, `especie`): desde a introdução dos DTOs de request (`AnimalRequestDTO`, `RacaRequestDTO`), o backend espera o id da entidade associada como campo escalar direto no payload (`racaId`, `adotanteId`, `especieId`), não mais como objeto aninhado `{ id }` — é o que `AnimalForm.salvar()` envia via `AnimalPayload`. Enviar `{ id }` para esses campos falha silenciosamente: o Jackson ignora a chave desconhecida e o campo escalar chega `null`, disparando erro de validação `@NotNull` só no lado do bind, não do JSON parsing.
-- **Raça e Espécie**: o backend já tem DTOs e CRUD completo para Raça (`GET/POST/PUT/DELETE /racas`, contrato `RacaRequestDTO`/`RacaResponseDTO`) e endpoints só de leitura para Espécie (`GET /especies`). O frontend ainda não tem telas próprias para nenhum dos dois — `RacaService` só implementa `listar()`, usado para popular o dropdown de raça no `AnimalForm`, e não há `EspecieService`.
+- **Raça e Espécie**: o backend tem DTOs e CRUD completo para Raça (`GET/POST/PUT/DELETE /racas`, contrato `RacaRequestDTO`/`RacaResponseDTO`) e endpoints só de leitura para Espécie (`GET /especies`). O frontend já tem tela própria de Raça (`features/racas`, CRUD completo) e `EspecieService.listar()` (só leitura, usado para popular o `<mat-select>` de espécie no `RacaForm`); Espécie continua sem tela própria de gestão, por ser um cadastro fixo só de leitura no backend.
 - **Erros** seguem RFC 7807 `ProblemDetail`; validações retornam um mapa `detalhes` campo→mensagem, lido em `src/app/shared/erro.ts`.
 - **Regra de adotante**: o `AnimalService` do backend só exige/resolve o `Adotante` quando `status == ADOTADO`. O form espelha isso tornando `adotanteId` obrigatório só nesse status.
 - **CORS**: o backend libera `http://localhost:4200` em dev (`CorsConfig`). Se mudar a porta do `ng serve`, ajuste lá também.
 - Rodar o backend: a partir do diretório do `pom.xml`, `mvnw.cmd spring-boot:run` (porta 8080). Requer um `application-local.properties` com credenciais PostgreSQL (não versionado).
 
-Apenas o **CRUD de Animais** está implementado nos dois lados como padrão de referência; Adotante, Espécie e Raça devem replicá-lo.
+O **CRUD de Animais**, **Adotante** e **Raça** estão implementados nos dois lados; Espécie permanece só leitura por design do backend.
 
 ## Mensagens de commit
 

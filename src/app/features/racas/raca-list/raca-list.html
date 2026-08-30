@@ -1,0 +1,136 @@
+<section class="pagina">
+  <div class="cabecalho">
+    <div class="cabecalho__titulo">
+      <h1>Raças</h1>
+      <p>Cadastre e gerencie as raças cadastradas no sistema.</p>
+    </div>
+    <button mat-flat-button color="primary" class="btn-novo" routerLink="/racas/novo">
+      <mat-icon>add</mat-icon>
+      Nova raça
+    </button>
+  </div>
+
+  @if (!carregando() && total() > 0) {
+    <div class="resumo">
+      <div class="resumo__item resumo__item--teal">
+        <span class="resumo__valor">{{ total() }}</span>
+        <span class="resumo__rotulo">Raças cadastradas</span>
+      </div>
+    </div>
+  }
+
+  @if (!carregando() && total() > 0) {
+    <div class="barra-ferramentas">
+      <mat-button-toggle-group
+        [value]="visao()"
+        (change)="definirVisao($event.value)"
+        hideSingleSelectionIndicator
+        aria-label="Modo de exibição"
+      >
+        <mat-button-toggle value="cards" matTooltip="Cards">
+          <mat-icon>grid_view</mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle value="tabela" matTooltip="Tabela">
+          <mat-icon>table_rows</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  }
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!carregando() && total() === 0) {
+    <div class="vazio">
+      <span class="vazio__icone"><mat-icon>category</mat-icon></span>
+      <h2>Nenhuma raça cadastrada</h2>
+      <p>Comece adicionando a primeira raça ao sistema.</p>
+      <button mat-flat-button color="primary" routerLink="/racas/novo">
+        <mat-icon>add</mat-icon>
+        Cadastrar raça
+      </button>
+    </div>
+  }
+
+  <!-- Visão em cards -->
+  @if (!carregando() && total() > 0 && visao() === 'cards') {
+    <div class="grade">
+      @for (r of racas(); track r.id) {
+        <article class="card">
+          <div class="card__topo">
+            <span class="avatar">{{ inicial(r) }}</span>
+          </div>
+
+          <div class="card__corpo">
+            <h3 class="card__nome">{{ r.nome }}</h3>
+            <p class="card__sub">{{ especie(r) }}</p>
+          </div>
+
+          <div class="card__acoes">
+            <button mat-stroked-button [routerLink]="['/racas', r.id, 'editar']">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button
+              mat-icon-button
+              class="btn-excluir"
+              matTooltip="Excluir"
+              (click)="confirmarExclusao(r)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- Visão em tabela -->
+  @if (!carregando() && total() > 0 && visao() === 'tabela') {
+    <div class="tabela-wrap">
+      <table mat-table [dataSource]="racas()" class="tabela">
+        <ng-container matColumnDef="raca">
+          <th mat-header-cell *matHeaderCellDef>Raça</th>
+          <td mat-cell *matCellDef="let r">
+            <div class="celula-animal">
+              <span class="avatar avatar--sm">{{ inicial(r) }}</span>
+              <div>
+                <strong>{{ r.nome }}</strong>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="especie">
+          <th mat-header-cell *matHeaderCellDef>Espécie</th>
+          <td mat-cell *matCellDef="let r">{{ especie(r) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef class="col-acoes">Ações</th>
+          <td mat-cell *matCellDef="let r" class="col-acoes">
+            <button
+              mat-icon-button
+              matTooltip="Editar"
+              [routerLink]="['/racas', r.id, 'editar']"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="btn-excluir"
+              matTooltip="Excluir"
+              (click)="confirmarExclusao(r)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+      </table>
+    </div>
+  }
+</section>

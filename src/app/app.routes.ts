@@ -44,5 +44,20 @@ export const routes: Routes = [
         (m) => m.AdotanteForm,
       ),
   },
+  {
+    path: 'racas',
+    loadComponent: () =>
+      import('./features/racas/raca-list/raca-list').then((m) => m.RacaList),
+  },
+  {
+    path: 'racas/novo',
+    loadComponent: () =>
+      import('./features/racas/raca-form/raca-form').then((m) => m.RacaForm),
+  },
+  {
+    path: 'racas/:id/editar',
+    loadComponent: () =>
+      import('./features/racas/raca-form/raca-form').then((m) => m.RacaForm),
+  },
   { path: '**', redirectTo: 'animais' },
 ];

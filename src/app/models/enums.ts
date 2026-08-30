@@ -46,6 +46,11 @@ export const STATUS_LABELS: Record<AnimalStatus, string> = Object.fromEntries(
   ANIMAL_STATUS.map((o) => [o.value, o.label]),
 ) as Record<AnimalStatus, string>;
 
+export const ESPECIE_LABELS: Record<AnimalEspecie, string> = {
+  GATO: 'Gato',
+  CACHORRO: 'Cachorro',
+};
+
 // --- Adotante ---
 
 export type EstadoCivil =

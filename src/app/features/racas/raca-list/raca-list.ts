@@ -1,0 +1,108 @@
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { RacaService } from '../../../services/raca.service';
+import { Raca } from '../../../models/raca.model';
+import { ESPECIE_LABELS } from '../../../models/enums';
+import { mensagemDeErro } from '../../../shared/erro';
+import { RacaDeleteDialog } from '../raca-delete-dialog/raca-delete-dialog';
+
+type Visao = 'cards' | 'tabela';
+const VISAO_KEY = 'racas:visao';
+
+@Component({
+  selector: 'app-raca-list',
+  imports: [
+    RouterLink,
+    MatTableModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    MatDialogModule,
+  ],
+  templateUrl: './raca-list.html',
+  styleUrl: './raca-list.scss',
+})
+export class RacaList implements OnInit {
+  private readonly service = inject(RacaService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+
+  readonly racas = signal<Raca[]>([]);
+  readonly carregando = signal(false);
+  readonly visao = signal<Visao>(this.lerVisaoSalva());
+  readonly colunas = ['raca', 'especie', 'acoes'];
+
+  readonly total = computed(() => this.racas().length);
+
+  ngOnInit(): void {
+    this.carregar();
+  }
+
+  definirVisao(v: Visao): void {
+    this.visao.set(v);
+    localStorage.setItem(VISAO_KEY, v);
+  }
+
+  private lerVisaoSalva(): Visao {
+    return localStorage.getItem(VISAO_KEY) === 'tabela' ? 'tabela' : 'cards';
+  }
+
+  especie(raca: Raca): string {
+    const nome = raca.especie?.nome;
+    return nome ? ESPECIE_LABELS[nome] : '—';
+  }
+
+  /** Inicial do nome da raça para o avatar. */
+  inicial(raca: Raca): string {
+    return raca.nome?.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  carregar(): void {
+    this.carregando.set(true);
+    this.service.listar().subscribe({
+      next: (dados) => {
+        this.racas.set(dados);
+        this.carregando.set(false);
+      },
+      error: (err) => {
+        this.carregando.set(false);
+        this.notificar(mensagemDeErro(err));
+      },
+    });
+  }
+
+  confirmarExclusao(raca: Raca): void {
+    const ref = this.dialog.open(RacaDeleteDialog, {
+      data: { nome: raca.nome },
+      width: '420px',
+    });
+    ref.afterClosed().subscribe((confirmado) => {
+      if (confirmado) this.excluir(raca);
+    });
+  }
+
+  private excluir(raca: Raca): void {
+    this.service.excluir(raca.id).subscribe({
+      next: () => {
+        this.notificar(`"${raca.nome}" foi excluída.`);
+        this.carregar();
+      },
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
+  }
+
+  private notificar(mensagem: string): void {
+    this.snackBar.open(mensagem, 'Fechar', { duration: 5000 });
+  }
+}

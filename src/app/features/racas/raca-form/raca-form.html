@@ -1,0 +1,53 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/racas">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  <div class="form-cabecalho">
+    <h1>{{ ehEdicao() ? 'Editar raça' : 'Nova raça' }}</h1>
+    <p>Preencha os dados da raça. Campos com * são obrigatórios.</p>
+  </div>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="form">
+    <fieldset class="bloco">
+      <legend class="bloco__titulo">
+        <mat-icon>category</mat-icon>
+        Identificação
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" maxlength="50" />
+          @if (form.controls.nome.hasError('required')) {
+            <mat-error>Informe o nome.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Espécie</mat-label>
+          <mat-select formControlName="especieId">
+            @for (especie of especies(); track especie.id) {
+              <mat-option [value]="especie.id">{{ especieLabels[especie.nome] }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.especieId.hasError('required')) {
+            <mat-error>Selecione a espécie.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <div class="form-acoes">
+      <button mat-stroked-button type="button" routerLink="/racas">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+        <mat-icon>{{ salvando() ? 'hourglass_top' : 'save' }}</mat-icon>
+        {{ salvando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</section>
