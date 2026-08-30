@@ -31,7 +31,13 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Data de nascimento</mat-label>
-          <input matInput [matDatepicker]="pickerNasc" formControlName="dataNascimento" />
+          <input
+            matInput
+            [matDatepicker]="pickerNasc"
+            formControlName="dataNascimento"
+            appMascaraData
+            placeholder="dd/mm/aaaa"
+          />
           <mat-datepicker-toggle matIconSuffix [for]="pickerNasc" />
           <mat-datepicker #pickerNasc />
           @if (form.controls.dataNascimento.hasError('required')) {

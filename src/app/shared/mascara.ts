@@ -52,6 +52,15 @@ export function formatarCep(raw: string): string {
   return resultado;
 }
 
+/** Data: dd/mm/aaaa. */
+export function formatarData(raw: string): string {
+  const digitos = apenasDigitos(raw).slice(0, 8);
+  let resultado = digitos.slice(0, 2);
+  if (digitos.length > 2) resultado += `/${digitos.slice(2, 4)}`;
+  if (digitos.length > 4) resultado += `/${digitos.slice(4, 8)}`;
+  return resultado;
+}
+
 export const MASCARAS: Record<TipoMascara, (raw: string) => string> = {
   cpf: formatarCpf,
   rg: formatarRg,

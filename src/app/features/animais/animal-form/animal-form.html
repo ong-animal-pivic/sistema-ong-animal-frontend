@@ -161,7 +161,13 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Data de resgate</mat-label>
-          <input matInput [matDatepicker]="pickerResgate" formControlName="dataResgate" />
+          <input
+            matInput
+            [matDatepicker]="pickerResgate"
+            formControlName="dataResgate"
+            appMascaraData
+            placeholder="dd/mm/aaaa"
+          />
           <mat-datepicker-toggle matIconSuffix [for]="pickerResgate" />
           <mat-datepicker #pickerResgate />
           @if (form.controls.dataResgate.hasError('required')) {
@@ -171,7 +177,13 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Data de saída</mat-label>
-          <input matInput [matDatepicker]="pickerSaida" formControlName="dataSaida" />
+          <input
+            matInput
+            [matDatepicker]="pickerSaida"
+            formControlName="dataSaida"
+            appMascaraData
+            placeholder="dd/mm/aaaa"
+          />
           <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
           <mat-datepicker #pickerSaida />
         </mat-form-field>

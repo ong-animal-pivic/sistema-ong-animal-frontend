@@ -20,6 +20,7 @@ import {
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { MascaraDirective } from '../../../shared/mascara.directive';
+import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
 
 /** Converte um Date para string ISO `yyyy-MM-dd` no fuso local (sem deslocar o dia). */
 function paraIso(data: Date | null): string | null {
@@ -58,6 +59,7 @@ const telefonesDiferentesValidator: ValidatorFn = (grupo: AbstractControl): Vali
     MatIconModule,
     MatProgressBarModule,
     MascaraDirective,
+    MascaraDataDirective,
   ],
   templateUrl: './adotante-form.html',
   styleUrl: './adotante-form.scss',

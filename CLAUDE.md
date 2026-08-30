@@ -20,7 +20,7 @@ O runner de teste é **Vitest** (não Karma/Jasmine), integrado via `@angular/bu
 
 ## Como rodar o projeto completo (frontend + backend)
 
-Os dois repositórios vivem lado a lado em `C:\Users\acorreia3\Downloads\pivic\`:
+Os dois repositórios vivem lado a lado em `C:\Users\acorreia3\Downloads\Iniciação Ciêntifica\`:
 `sistema-ong-animal-frontend\` (este) e `sistema-ong-animal\` (backend).
 
 1. **PostgreSQL** precisa estar rodando e escutando na porta configurada em
@@ -43,7 +43,7 @@ Suba o backend **antes** do frontend (ou pelo menos antes de usar as telas), já
 
 Fluxo de dados de cada tela: **componente standalone → service (`inject(HttpClient)`) → API**. Não há state management global; o estado vive em `signal()`s dentro de cada componente.
 
-- `src/app/app.config.ts` — providers raiz: router, `provideHttpClient()`, date adapter nativo e `MAT_DATE_LOCALE: 'pt-BR'`.
+- `src/app/app.config.ts` — providers raiz: router, `provideHttpClient()`, date adapter nativo, `MAT_DATE_LOCALE: 'pt-BR'` e `MAT_ICON_DEFAULT_OPTIONS` (ícones Material Symbols Rounded).
 - `src/app/app.routes.ts` — rotas com `loadComponent` (lazy). O form de criar e editar reusa o mesmo componente `AnimalForm`; a presença do param `:id` distingue os modos.
 - `src/app/features/animais/`, `src/app/features/adotantes/` e `src/app/features/racas/` — telas por entidade: `*-list` (tabela Material + diálogo de exclusão), `*-form` (criar/editar), `*-delete-dialog` (confirmação inline).
 - `src/app/services/` — wrappers HTTP por recurso (`AnimalService`, `AdotanteService`, `RacaService` com CRUD completo, `EspecieService` só leitura).
@@ -67,7 +67,7 @@ Fluxo de dados de cada tela: **componente standalone → service (`inject(HttpCl
 
 ## Backend (Spring Boot)
 
-A API consumida vive em **repositório separado**: `C:\Users\acorreia3\Downloads\pivic\sistema-ong-animal` (tem seu próprio `CLAUDE.md` mais detalhado). Stack: **Spring Boot 3.5 / Java 21 / PostgreSQL / Flyway**, pacote `com.umc.sistemaonganimal`.
+A API consumida vive em **repositório separado**: `C:\Users\acorreia3\Downloads\Iniciação Ciêntifica\sistema-ong-animal` (tem seu próprio `CLAUDE.md` mais detalhado). Stack: **Spring Boot 3.5 / Java 17 / PostgreSQL / Flyway**, pacote `com.umc.sistemaonganimal`.
 
 O que importa para o frontend:
 
@@ -87,4 +87,4 @@ Após concluir qualquer alteração concreta no código, sugira ao final da resp
 
 ## Notas
 
-- `app.spec.ts` ainda contém o teste boilerplate do Angular CLI (procura "Hello, sistema-ong-animal-frontend") — não reflete a UI atual; ajuste ao mexer em `App`.
+- `app.spec.ts` testa `App` de fato ("should create the app" e "should render the brand name", verificando `.brand__name` conter "Sistema ONG Animal") — não é mais o boilerplate do Angular CLI.

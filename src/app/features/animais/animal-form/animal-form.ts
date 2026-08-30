@@ -34,6 +34,7 @@ import {
   CORES_OLHOS,
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
 import { formatarIdade } from '../../../shared/idade';
 
 /** Converte um Date para string ISO `yyyy-MM-dd` no fuso local (sem deslocar o dia). */
@@ -71,6 +72,7 @@ function filtrarCores(cores: string[], texto: string | null | undefined): string
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MascaraDataDirective,
   ],
   templateUrl: './animal-form.html',
   styleUrl: './animal-form.scss',
