@@ -83,7 +83,7 @@ Apenas o **CRUD de Animais** está implementado nos dois lados como padrão de r
 
 ## Mensagens de commit
 
-Após concluir qualquer alteração concreta no código, sugira ao final da resposta a mensagem de commit a ser usada, seguindo o padrão de **commit semântico** (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, etc.). Apenas sugira o texto — **não execute o commit**, a menos que o usuário peça explicitamente.
+Após concluir qualquer alteração concreta no código, sugira ao final da resposta a mensagem de commit a ser usada, seguindo o padrão de **commit semântico** (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, etc.), com a descrição no **modo imperativo** (ex.: "adiciona", "corrige", "remove", não "adicionado" ou "adicionando"). Apenas sugira o texto — **não execute o commit**, a menos que o usuário peça explicitamente.
 
 ## Notas
 
