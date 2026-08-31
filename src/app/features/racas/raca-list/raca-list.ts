@@ -10,10 +10,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 import { RacaService } from '../../../services/raca.service';
 import { Raca } from '../../../models/raca.model';
-import { ESPECIE_LABELS } from '../../../models/enums';
+import { AnimalEspecie, ANIMAL_ESPECIES, ESPECIE_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { RacaDeleteDialog } from '../raca-delete-dialog/raca-delete-dialog';
 import { contemTexto } from '../../../shared/busca';
@@ -34,6 +35,7 @@ const VISAO_KEY = 'racas:visao';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './raca-list.html',
   styleUrl: './raca-list.scss',
@@ -49,10 +51,19 @@ export class RacaList implements OnInit {
   readonly termo = signal('');
   readonly colunas = ['raca', 'especie', 'acoes'];
 
+  readonly opcoesEspecie = ANIMAL_ESPECIES;
+  readonly filtroEspecie = signal<AnimalEspecie[]>([]);
+
   readonly total = computed(() => this.racas().length);
-  readonly itensFiltrados = computed(() =>
-    this.racas().filter((r) => this.corresponde(r, this.termo())),
-  );
+  readonly filtrosAtivos = computed(() => this.filtroEspecie().length > 0);
+  readonly itensFiltrados = computed(() => {
+    const especies = this.filtroEspecie();
+    return this.racas().filter(
+      (r) =>
+        this.corresponde(r, this.termo()) &&
+        (especies.length === 0 || (!!r.especie?.nome && especies.includes(r.especie.nome))),
+    );
+  });
   readonly totalFiltrado = computed(() => this.itensFiltrados().length);
 
   ngOnInit(): void {
@@ -62,6 +73,10 @@ export class RacaList implements OnInit {
   definirVisao(v: Visao): void {
     this.visao.set(v);
     localStorage.setItem(VISAO_KEY, v);
+  }
+
+  limparFiltros(): void {
+    this.filtroEspecie.set([]);
   }
 
   private lerVisaoSalva(): Visao {
