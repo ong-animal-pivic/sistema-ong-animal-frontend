@@ -20,35 +20,95 @@
   }
 
   @if (!carregando() && total() > 0) {
-    <div class="barra-ferramentas">
-      <mat-form-field appearance="outline" class="busca-campo">
-        <mat-icon matPrefix>search</mat-icon>
-        <input
-          matInput
-          placeholder="Buscar por nome, CPF ou cidade..."
-          [value]="termo()"
-          (input)="termo.set($any($event.target).value)"
-        />
-        @if (termo()) {
-          <button matSuffix mat-icon-button aria-label="Limpar busca" (click)="termo.set('')">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
+    <div class="ferramentas">
+      <div class="ferramentas__topo">
+        <mat-form-field appearance="outline" class="busca-campo">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            placeholder="Buscar por nome, CPF ou cidade..."
+            [value]="termo()"
+            (input)="termo.set($any($event.target).value)"
+          />
+          @if (termo()) {
+            <button matSuffix mat-icon-button aria-label="Limpar busca" (click)="termo.set('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
 
-      <mat-button-toggle-group
-        [value]="visao()"
-        (change)="definirVisao($event.value)"
-        hideSingleSelectionIndicator
-        aria-label="Modo de exibição"
-      >
-        <mat-button-toggle value="cards" matTooltip="Cards">
-          <mat-icon>grid_view</mat-icon>
-        </mat-button-toggle>
-        <mat-button-toggle value="tabela" matTooltip="Tabela">
-          <mat-icon>table_rows</mat-icon>
-        </mat-button-toggle>
-      </mat-button-toggle-group>
+        <mat-button-toggle-group
+          [value]="visao()"
+          (change)="definirVisao($event.value)"
+          hideSingleSelectionIndicator
+          aria-label="Modo de exibição"
+        >
+          <mat-button-toggle value="cards" matTooltip="Cards">
+            <mat-icon>grid_view</mat-icon>
+          </mat-button-toggle>
+          <mat-button-toggle value="tabela" matTooltip="Tabela">
+            <mat-icon>table_rows</mat-icon>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="ferramentas__divisor"></div>
+
+      <div class="filtros">
+        <div class="filtros__cabecalho">
+          <span class="filtros__titulo">
+            <mat-icon>tune</mat-icon>
+            Filtros
+          </span>
+          @if (filtrosAtivos()) {
+            <button mat-stroked-button class="filtros__limpar" (click)="limparFiltros()">
+              <mat-icon>filter_alt_off</mat-icon>
+              Limpar filtros
+            </button>
+          }
+        </div>
+
+        <div class="filtros__campos">
+          <mat-form-field appearance="outline" class="filtros__campo">
+            <mat-label>Estado</mat-label>
+            <mat-select
+              multiple
+              [value]="filtroEstado()"
+              (selectionChange)="filtroEstado.set($event.value)"
+            >
+              @for (uf of opcoesEstado(); track uf) {
+                <mat-option [value]="uf">{{ uf }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtros__campo">
+            <mat-label>Faixa de renda</mat-label>
+            <mat-select
+              multiple
+              [value]="filtroFaixaRenda()"
+              (selectionChange)="filtroFaixaRenda.set($event.value)"
+            >
+              @for (o of opcoesFaixaRenda; track o.value) {
+                <mat-option [value]="o.value">{{ o.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtros__campo">
+            <mat-label>Faixa etária</mat-label>
+            <mat-select
+              multiple
+              [value]="filtroFaixaEtaria()"
+              (selectionChange)="filtroFaixaEtaria.set($event.value)"
+            >
+              @for (o of opcoesFaixaEtaria; track o.value) {
+                <mat-option [value]="o.value">{{ o.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
     </div>
   }
 
@@ -71,8 +131,8 @@
   @if (!carregando() && total() > 0 && totalFiltrado() === 0) {
     <div class="vazio">
       <span class="vazio__icone"><mat-icon>search_off</mat-icon></span>
-      <h2>Nenhum resultado encontrado</h2>
-      <p>Tente buscar por outro termo.</p>
+      <h2>Nenhum adotante encontrado.</h2>
+      <p>Tente ajustar a busca ou os filtros aplicados.</p>
     </div>
   }
 
