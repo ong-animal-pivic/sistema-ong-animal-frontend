@@ -77,13 +77,13 @@ export class AnimalList implements OnInit {
   readonly opcoesSexo = ANIMAL_SEXOS;
   readonly opcoesPorte = ANIMAL_PORTES;
 
-  readonly filtroEspecie = signal<AnimalEspecie | null>(null);
-  readonly filtroRacaId = signal<number | null>(null);
-  readonly filtroStatus = signal<AnimalStatus | null>(null);
-  readonly filtroCastrado = signal<boolean | null>(null);
-  readonly filtroSexo = signal<AnimalSexo | null>(null);
-  readonly filtroPorte = signal<AnimalPorte | null>(null);
-  readonly filtroAdotanteId = signal<number | null>(null);
+  readonly filtroEspecie = signal<AnimalEspecie[]>([]);
+  readonly filtroRacaId = signal<number[]>([]);
+  readonly filtroStatus = signal<AnimalStatus[]>([]);
+  readonly filtroCastrado = signal<boolean[]>([]);
+  readonly filtroSexo = signal<AnimalSexo[]>([]);
+  readonly filtroPorte = signal<AnimalPorte[]>([]);
+  readonly filtroAdotanteId = signal<number[]>([]);
 
   readonly total = computed(() => this.animais().length);
   readonly disponiveis = computed(
@@ -94,50 +94,62 @@ export class AnimalList implements OnInit {
   );
 
   readonly racasFiltradas = computed(() => {
-    const especie = this.filtroEspecie();
-    return especie ? this.racas().filter((r) => r.especie?.nome === especie) : this.racas();
+    const especies = this.filtroEspecie();
+    return especies.length === 0
+      ? this.racas()
+      : this.racas().filter((r) => r.especie?.nome && especies.includes(r.especie.nome));
   });
 
   readonly filtrosAtivos = computed(
     () =>
-      this.filtroEspecie() !== null ||
-      this.filtroRacaId() !== null ||
-      this.filtroStatus() !== null ||
-      this.filtroCastrado() !== null ||
-      this.filtroSexo() !== null ||
-      this.filtroPorte() !== null ||
-      this.filtroAdotanteId() !== null,
+      this.filtroEspecie().length > 0 ||
+      this.filtroRacaId().length > 0 ||
+      this.filtroStatus().length > 0 ||
+      this.filtroCastrado().length > 0 ||
+      this.filtroSexo().length > 0 ||
+      this.filtroPorte().length > 0 ||
+      this.filtroAdotanteId().length > 0,
   );
 
   readonly itensFiltrados = computed(() => {
-    const especie = this.filtroEspecie();
-    const racaId = this.filtroRacaId();
+    const especies = this.filtroEspecie();
+    const racaIds = this.filtroRacaId();
     const status = this.filtroStatus();
     const castrado = this.filtroCastrado();
-    const sexo = this.filtroSexo();
-    const porte = this.filtroPorte();
-    const adotanteId = this.filtroAdotanteId();
+    const sexos = this.filtroSexo();
+    const portes = this.filtroPorte();
+    const adotanteIds = this.filtroAdotanteId();
 
     return this.animais().filter(
       (a) =>
         this.corresponde(a, this.termo()) &&
-        (!especie || a.raca?.especie?.nome === especie) &&
-        (!racaId || a.raca?.id === racaId) &&
-        (!status || a.status === status) &&
-        (castrado === null || a.castrado === castrado) &&
-        (!sexo || a.sexo === sexo) &&
-        (!porte || a.porte === porte) &&
-        (!adotanteId || a.adotante?.id === adotanteId),
+        (especies.length === 0 ||
+          (!!a.raca?.especie?.nome && especies.includes(a.raca.especie.nome))) &&
+        (racaIds.length === 0 || (!!a.raca?.id && racaIds.includes(a.raca.id))) &&
+        (status.length === 0 || status.includes(a.status)) &&
+        (castrado.length === 0 || castrado.includes(a.castrado)) &&
+        (sexos.length === 0 || sexos.includes(a.sexo)) &&
+        (portes.length === 0 || portes.includes(a.porte)) &&
+        (adotanteIds.length === 0 || (!!a.adotante?.id && adotanteIds.includes(a.adotante.id))),
     );
   });
   readonly totalFiltrado = computed(() => this.itensFiltrados().length);
 
+  readonly mostrarFiltroAdotante = computed(() => this.filtroStatus().includes('ADOTADO'));
+
   constructor() {
     effect(() => {
       const idsValidos = new Set(this.racasFiltradas().map((r) => r.id));
-      const racaId = this.filtroRacaId();
-      if (racaId !== null && !idsValidos.has(racaId)) {
-        this.filtroRacaId.set(null);
+      const racaIds = this.filtroRacaId();
+      const filtrados = racaIds.filter((id) => idsValidos.has(id));
+      if (filtrados.length !== racaIds.length) {
+        this.filtroRacaId.set(filtrados);
+      }
+    });
+
+    effect(() => {
+      if (!this.mostrarFiltroAdotante() && this.filtroAdotanteId().length > 0) {
+        this.filtroAdotanteId.set([]);
       }
     });
   }
@@ -149,13 +161,13 @@ export class AnimalList implements OnInit {
   }
 
   limparFiltros(): void {
-    this.filtroEspecie.set(null);
-    this.filtroRacaId.set(null);
-    this.filtroStatus.set(null);
-    this.filtroCastrado.set(null);
-    this.filtroSexo.set(null);
-    this.filtroPorte.set(null);
-    this.filtroAdotanteId.set(null);
+    this.filtroEspecie.set([]);
+    this.filtroRacaId.set([]);
+    this.filtroStatus.set([]);
+    this.filtroCastrado.set([]);
+    this.filtroSexo.set([]);
+    this.filtroPorte.set([]);
+    this.filtroAdotanteId.set([]);
   }
 
   definirVisao(v: Visao): void {
