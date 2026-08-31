@@ -8,12 +8,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { RacaService } from '../../../services/raca.service';
 import { Raca } from '../../../models/raca.model';
 import { ESPECIE_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { RacaDeleteDialog } from '../raca-delete-dialog/raca-delete-dialog';
+import { contemTexto } from '../../../shared/busca';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'racas:visao';
@@ -29,6 +32,8 @@ const VISAO_KEY = 'racas:visao';
     MatProgressBarModule,
     MatTooltipModule,
     MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './raca-list.html',
   styleUrl: './raca-list.scss',
@@ -41,9 +46,14 @@ export class RacaList implements OnInit {
   readonly racas = signal<Raca[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
+  readonly termo = signal('');
   readonly colunas = ['raca', 'especie', 'acoes'];
 
   readonly total = computed(() => this.racas().length);
+  readonly itensFiltrados = computed(() =>
+    this.racas().filter((r) => this.corresponde(r, this.termo())),
+  );
+  readonly totalFiltrado = computed(() => this.itensFiltrados().length);
 
   ngOnInit(): void {
     this.carregar();
@@ -66,6 +76,10 @@ export class RacaList implements OnInit {
   /** Inicial do nome da raça para o avatar. */
   inicial(raca: Raca): string {
     return raca.nome?.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  private corresponde(raca: Raca, termo: string): boolean {
+    return contemTexto(raca.nome, termo) || contemTexto(this.especie(raca), termo);
   }
 
   carregar(): void {

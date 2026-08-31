@@ -21,6 +21,21 @@
 
   @if (!carregando() && total() > 0) {
     <div class="barra-ferramentas">
+      <mat-form-field appearance="outline" class="busca-campo">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Buscar por nome ou espécie..."
+          [value]="termo()"
+          (input)="termo.set($any($event.target).value)"
+        />
+        @if (termo()) {
+          <button matSuffix mat-icon-button aria-label="Limpar busca" (click)="termo.set('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
       <mat-button-toggle-group
         [value]="visao()"
         (change)="definirVisao($event.value)"
@@ -53,10 +68,18 @@
     </div>
   }
 
+  @if (!carregando() && total() > 0 && totalFiltrado() === 0) {
+    <div class="vazio">
+      <span class="vazio__icone"><mat-icon>search_off</mat-icon></span>
+      <h2>Nenhum resultado encontrado</h2>
+      <p>Tente buscar por outro termo.</p>
+    </div>
+  }
+
   <!-- Visão em cards -->
-  @if (!carregando() && total() > 0 && visao() === 'cards') {
+  @if (!carregando() && totalFiltrado() > 0 && visao() === 'cards') {
     <div class="grade">
-      @for (r of racas(); track r.id) {
+      @for (r of itensFiltrados(); track r.id) {
         <article class="card">
           <div class="card__topo">
             <span class="avatar">{{ inicial(r) }}</span>
@@ -87,9 +110,9 @@
   }
 
   <!-- Visão em tabela -->
-  @if (!carregando() && total() > 0 && visao() === 'tabela') {
+  @if (!carregando() && totalFiltrado() > 0 && visao() === 'tabela') {
     <div class="tabela-wrap">
-      <table mat-table [dataSource]="racas()" class="tabela">
+      <table mat-table [dataSource]="itensFiltrados()" class="tabela">
         <ng-container matColumnDef="raca">
           <th mat-header-cell *matHeaderCellDef>Raça</th>
           <td mat-cell *matCellDef="let r">

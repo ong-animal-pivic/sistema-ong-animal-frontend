@@ -46,10 +46,14 @@ export const STATUS_LABELS: Record<AnimalStatus, string> = Object.fromEntries(
   ANIMAL_STATUS.map((o) => [o.value, o.label]),
 ) as Record<AnimalStatus, string>;
 
-export const ESPECIE_LABELS: Record<AnimalEspecie, string> = {
-  GATO: 'Gato',
-  CACHORRO: 'Cachorro',
-};
+export const ANIMAL_ESPECIES: Opcao<AnimalEspecie>[] = [
+  { value: 'CACHORRO', label: 'Cachorro' },
+  { value: 'GATO', label: 'Gato' },
+];
+
+export const ESPECIE_LABELS: Record<AnimalEspecie, string> = Object.fromEntries(
+  ANIMAL_ESPECIES.map((o) => [o.value, o.label]),
+) as Record<AnimalEspecie, string>;
 
 // --- Adotante ---
 

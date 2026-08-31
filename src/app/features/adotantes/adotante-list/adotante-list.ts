@@ -8,12 +8,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { AdotanteService } from '../../../services/adotante.service';
 import { Adotante } from '../../../models/adotante.model';
 import { mensagemDeErro } from '../../../shared/erro';
 import { AdotanteDeleteDialog } from '../adotante-delete-dialog/adotante-delete-dialog';
 import { formatarCpf, formatarTelefone } from '../../../shared/mascara';
+import { contemTexto } from '../../../shared/busca';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'adotantes:visao';
@@ -29,6 +32,8 @@ const VISAO_KEY = 'adotantes:visao';
     MatProgressBarModule,
     MatTooltipModule,
     MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './adotante-list.html',
   styleUrl: './adotante-list.scss',
@@ -41,9 +46,14 @@ export class AdotanteList implements OnInit {
   readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
+  readonly termo = signal('');
   readonly colunas = ['adotante', 'documento', 'cidade', 'contato', 'acoes'];
 
   readonly total = computed(() => this.adotantes().length);
+  readonly itensFiltrados = computed(() =>
+    this.adotantes().filter((a) => this.corresponde(a, this.termo())),
+  );
+  readonly totalFiltrado = computed(() => this.itensFiltrados().length);
 
   ngOnInit(): void {
     this.carregar();
@@ -77,6 +87,14 @@ export class AdotanteList implements OnInit {
   /** Inicial do nome do adotante para o avatar. */
   inicial(adotante: Adotante): string {
     return adotante.nome?.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  private corresponde(adotante: Adotante, termo: string): boolean {
+    return (
+      contemTexto(adotante.nome, termo) ||
+      contemTexto(this.cpf(adotante), termo) ||
+      contemTexto(this.cidade(adotante), termo)
+    );
   }
 
   carregar(): void {

@@ -29,6 +29,21 @@
 
   @if (!carregando() && total() > 0) {
     <div class="barra-ferramentas">
+      <mat-form-field appearance="outline" class="busca-campo">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Buscar por nome, espécie ou raça..."
+          [value]="termo()"
+          (input)="termo.set($any($event.target).value)"
+        />
+        @if (termo()) {
+          <button matSuffix mat-icon-button aria-label="Limpar busca" (click)="termo.set('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
       <mat-button-toggle-group
         [value]="visao()"
         (change)="definirVisao($event.value)"
@@ -42,6 +57,99 @@
           <mat-icon>table_rows</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
+    </div>
+
+    <div class="filtros">
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Espécie</mat-label>
+        <mat-select
+          [value]="filtroEspecie()"
+          (selectionChange)="filtroEspecie.set($event.value)"
+        >
+          <mat-option [value]="null">Todas</mat-option>
+          @for (o of opcoesEspecie; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Raça</mat-label>
+        <mat-select
+          [value]="filtroRacaId()"
+          (selectionChange)="filtroRacaId.set($event.value)"
+        >
+          <mat-option [value]="null">Todas</mat-option>
+          @for (r of racasFiltradas(); track r.id) {
+            <mat-option [value]="r.id">{{ r.nome }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [value]="filtroStatus()"
+          (selectionChange)="filtroStatus.set($event.value)"
+        >
+          <mat-option [value]="null">Todos</mat-option>
+          @for (o of opcoesStatus; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Sexo</mat-label>
+        <mat-select [value]="filtroSexo()" (selectionChange)="filtroSexo.set($event.value)">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (o of opcoesSexo; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Porte</mat-label>
+        <mat-select [value]="filtroPorte()" (selectionChange)="filtroPorte.set($event.value)">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (o of opcoesPorte; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Castrado</mat-label>
+        <mat-select
+          [value]="filtroCastrado()"
+          (selectionChange)="filtroCastrado.set($event.value)"
+        >
+          <mat-option [value]="null">Todos</mat-option>
+          <mat-option [value]="true">Sim</mat-option>
+          <mat-option [value]="false">Não</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtros__campo">
+        <mat-label>Adotante</mat-label>
+        <mat-select
+          [value]="filtroAdotanteId()"
+          (selectionChange)="filtroAdotanteId.set($event.value)"
+        >
+          <mat-option [value]="null">Todos</mat-option>
+          @for (ad of adotantes(); track ad.id) {
+            <mat-option [value]="ad.id">{{ ad.nome }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (filtrosAtivos()) {
+        <button mat-stroked-button class="filtros__limpar" (click)="limparFiltros()">
+          <mat-icon>filter_alt_off</mat-icon>
+          Limpar filtros
+        </button>
+      }
     </div>
   }
 
@@ -61,10 +169,18 @@
     </div>
   }
 
+  @if (!carregando() && total() > 0 && totalFiltrado() === 0) {
+    <div class="vazio">
+      <span class="vazio__icone"><mat-icon>search_off</mat-icon></span>
+      <h2>Nenhum animal encontrado.</h2>
+      <p>Tente ajustar a busca ou os filtros aplicados.</p>
+    </div>
+  }
+
   <!-- Visão em cards -->
-  @if (!carregando() && total() > 0 && visao() === 'cards') {
+  @if (!carregando() && totalFiltrado() > 0 && visao() === 'cards') {
     <div class="grade">
-      @for (a of animais(); track a.id) {
+      @for (a of itensFiltrados(); track a.id) {
         <article class="card">
           <div class="card__topo">
             <span class="avatar">{{ inicial(a) }}</span>
@@ -113,9 +229,9 @@
   }
 
   <!-- Visão em tabela -->
-  @if (!carregando() && total() > 0 && visao() === 'tabela') {
+  @if (!carregando() && totalFiltrado() > 0 && visao() === 'tabela') {
     <div class="tabela-wrap">
-      <table mat-table [dataSource]="animais()" class="tabela">
+      <table mat-table [dataSource]="itensFiltrados()" class="tabela">
         <ng-container matColumnDef="animal">
           <th mat-header-cell *matHeaderCellDef>Animal</th>
           <td mat-cell *matCellDef="let a">
