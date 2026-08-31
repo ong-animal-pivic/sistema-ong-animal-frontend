@@ -13,7 +13,7 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <form [formGroup]="form" (ngSubmit)="salvar()" class="form">
+  <form #formEl [formGroup]="form" (ngSubmit)="salvar()" class="form">
     <fieldset class="bloco">
       <legend class="bloco__titulo">
         <mat-icon>category</mat-icon>

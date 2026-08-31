@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +15,7 @@ import { RacaPayload } from '../../../models/raca.model';
 import { Especie } from '../../../models/especie.model';
 import { ESPECIE_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 
 @Component({
   selector: 'app-raca-form',
@@ -32,6 +33,8 @@ import { mensagemDeErro } from '../../../shared/erro';
   styleUrl: './raca-form.scss',
 })
 export class RacaForm implements OnInit {
+  @ViewChild('formEl') private readonly formEl?: ElementRef<HTMLFormElement>;
+
   private readonly fb = inject(FormBuilder);
   private readonly racaService = inject(RacaService);
   private readonly especieService = inject(EspecieService);
@@ -89,6 +92,7 @@ export class RacaForm implements OnInit {
   salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      scrollParaPrimeiroErro(this.formEl?.nativeElement ?? null);
       return;
     }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
@@ -34,6 +34,7 @@ import {
   CORES_OLHOS,
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
 import { formatarIdade } from '../../../shared/idade';
 
@@ -78,6 +79,8 @@ function filtrarCores(cores: string[], texto: string | null | undefined): string
   styleUrl: './animal-form.scss',
 })
 export class AnimalForm implements OnInit {
+  @ViewChild('formEl') private readonly formEl?: ElementRef<HTMLFormElement>;
+
   private readonly fb = inject(FormBuilder);
   private readonly animalService = inject(AnimalService);
   private readonly racaService = inject(RacaService);
@@ -216,6 +219,7 @@ export class AnimalForm implements OnInit {
   salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      scrollParaPrimeiroErro(this.formEl?.nativeElement ?? null);
       return;
     }
 

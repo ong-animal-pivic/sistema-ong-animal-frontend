@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,7 @@ import {
   Escolaridade,
 } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
+import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDirective } from '../../../shared/mascara.directive';
 import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
 
@@ -65,6 +66,8 @@ const telefonesDiferentesValidator: ValidatorFn = (grupo: AbstractControl): Vali
   styleUrl: './adotante-form.scss',
 })
 export class AdotanteForm implements OnInit {
+  @ViewChild('formEl') private readonly formEl?: ElementRef<HTMLFormElement>;
+
   private readonly fb = inject(FormBuilder);
   private readonly adotanteService = inject(AdotanteService);
   private readonly route = inject(ActivatedRoute);
@@ -167,6 +170,7 @@ export class AdotanteForm implements OnInit {
   salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      scrollParaPrimeiroErro(this.formEl?.nativeElement ?? null);
       return;
     }
 
