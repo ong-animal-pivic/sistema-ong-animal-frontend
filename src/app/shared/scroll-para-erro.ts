@@ -4,21 +4,29 @@ export function scrollParaPrimeiroErro(formElement: HTMLElement | null): void {
     return;
   }
 
-  // Aguarda o próximo ciclo de change detection para os `<mat-error>` já
-  // estarem renderizados quando o scroll acontecer.
-  setTimeout(() => {
-    // Campos com erro próprio (ex.: obrigatório vazio) têm prioridade; na
-    // ausência deles, busca um controle dentro de um grupo com erro de
-    // validação cruzada (ex.: dois telefones iguais), que só marca o grupo.
-    const campoInvalido =
-      formElement.querySelector<HTMLElement>('.ng-invalid[formControlName]') ??
-      formElement.querySelector<HTMLElement>('.ng-invalid[formGroupName] [formControlName]');
-    if (!campoInvalido) {
-      return;
-    }
+  // Aguarda o próximo paint para garantir que os `<mat-error>` (aplicados em
+  // resposta a `markAllAsTouched()`) já estejam no DOM — um `setTimeout(0)`
+  // sozinho não garante isso em app zoneless.
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      // Busca o primeiro `<mat-error>` de fato renderizado: os templates só
+      // colocam esse elemento no DOM via `@if`/`@else if` quando a mensagem
+      // deve aparecer, então ele reflete exatamente o que o usuário vê —
+      // tanto para erro de campo quanto para erro de grupo (ex.: dois
+      // telefones iguais, que só invalida o grupo, mas exibe a mensagem num
+      // campo específico).
+      const primeiroErroVisivel = formElement.querySelector<HTMLElement>('mat-error');
+      if (!primeiroErroVisivel) {
+        return;
+      }
 
-    const alvoDoScroll = campoInvalido.closest<HTMLElement>('mat-form-field') ?? campoInvalido;
-    alvoDoScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    campoInvalido.focus();
+      const alvoDoScroll =
+        primeiroErroVisivel.closest<HTMLElement>('mat-form-field') ?? primeiroErroVisivel;
+      const campoComErro =
+        alvoDoScroll.querySelector<HTMLElement>('[formControlName]') ?? alvoDoScroll;
+
+      alvoDoScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      campoComErro.focus({ preventScroll: true });
+    });
   });
 }
