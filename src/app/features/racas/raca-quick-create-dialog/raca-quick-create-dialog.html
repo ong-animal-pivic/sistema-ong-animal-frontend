@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Nova raça</h2>
+
+@if (salvando()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<form [formGroup]="form" (ngSubmit)="salvar()">
+  <mat-dialog-content class="conteudo">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" maxlength="50" />
+      @if (form.controls.nome.hasError('required')) {
+        <mat-error>Informe o nome.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Espécie</mat-label>
+      <mat-select formControlName="especieId">
+        @for (especie of especies(); track especie.id) {
+          <mat-option [value]="especie.id">{{ especieLabels[especie.nome] }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.especieId.hasError('required')) {
+        <mat-error>Selecione a espécie.</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" mat-dialog-close>Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+      <mat-icon>{{ salvando() ? 'hourglass_top' : 'save' }}</mat-icon>
+      {{ salvando() ? 'Salvando…' : 'Salvar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

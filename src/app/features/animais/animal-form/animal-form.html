@@ -41,21 +41,37 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Raça</mat-label>
-          <mat-select formControlName="racaId">
-            @for (raca of racas(); track raca.id) {
-              <mat-option [value]="raca.id">
-                {{ raca.nome }}
-                @if (raca.especie) {
-                  ({{ raca.especie.nome }})
-                }
-              </mat-option>
+          <mat-label>Espécie</mat-label>
+          <mat-select formControlName="especieId">
+            @for (especie of especies(); track especie.id) {
+              <mat-option [value]="especie.id">{{ especieLabels[especie.nome] }}</mat-option>
             }
           </mat-select>
-          @if (form.controls.racaId.hasError('required')) {
-            <mat-error>Selecione a raça.</mat-error>
-          }
         </mat-form-field>
+
+        @if (especieIdSelecionada() !== null) {
+        <div class="campo-com-acao">
+          <mat-form-field appearance="outline">
+            <mat-label>Raça</mat-label>
+            <mat-select formControlName="racaId">
+              @for (raca of racasFiltradas(); track raca.id) {
+                <mat-option [value]="raca.id">{{ raca.nome }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.racaId.hasError('required')) {
+              <mat-error>Selecione a raça.</mat-error>
+            }
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Cadastrar nova raça"
+            (click)="abrirCadastroRapidoDeRaca()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        }
       </div>
     </fieldset>
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
@@ -15,13 +15,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnimalService } from '../../../services/animal.service';
 import { RacaService } from '../../../services/raca.service';
+import { EspecieService } from '../../../services/especie.service';
 import { AdotanteService } from '../../../services/adotante.service';
 import { AnimalPayload } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
+import { Especie } from '../../../models/especie.model';
 import { Adotante } from '../../../models/adotante.model';
 import {
   ANIMAL_PORTES,
@@ -32,7 +36,9 @@ import {
   AnimalStatus,
   CORES_PELAGEM,
   CORES_OLHOS,
+  ESPECIE_LABELS,
 } from '../../../models/enums';
+import { RacaQuickCreateDialog } from '../../racas/raca-quick-create-dialog/raca-quick-create-dialog';
 import { mensagemDeErro } from '../../../shared/erro';
 import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
@@ -73,6 +79,8 @@ function filtrarCores(cores: string[], texto: string | null | undefined): string
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatTooltipModule,
+    MatDialogModule,
     MascaraDataDirective,
   ],
   templateUrl: './animal-form.html',
@@ -84,7 +92,9 @@ export class AnimalForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly animalService = inject(AnimalService);
   private readonly racaService = inject(RacaService);
+  private readonly especieService = inject(EspecieService);
   private readonly adotanteService = inject(AdotanteService);
+  private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
@@ -92,8 +102,10 @@ export class AnimalForm implements OnInit {
   readonly portes = ANIMAL_PORTES;
   readonly sexos = ANIMAL_SEXOS;
   readonly statusList = ANIMAL_STATUS;
+  readonly especieLabels = ESPECIE_LABELS;
 
   readonly racas = signal<Raca[]>([]);
+  readonly especies = signal<Especie[]>([]);
   readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly salvando = signal(false);
@@ -112,8 +124,21 @@ export class AnimalForm implements OnInit {
     corOlhos: [''],
     corPelagem: [''],
     observacao: [''],
+    especieId: [null as number | null],
     racaId: [null as number | null, Validators.required],
     adotanteId: [null as number | null],
+  });
+
+  // Espécie é só um filtro de UI para a Raça; não faz parte do AnimalPayload.
+  readonly especieIdSelecionada = toSignal(
+    this.form.controls.especieId.valueChanges,
+    { initialValue: this.form.controls.especieId.value },
+  );
+  readonly racasFiltradas = computed(() => {
+    const especieId = this.especieIdSelecionada();
+    return especieId === null
+      ? []
+      : this.racas().filter((r) => r.especie?.id === especieId);
   });
 
   // Sugestões filtradas pelo texto digitado (autocomplete); aceita valores fora da lista.
@@ -157,6 +182,15 @@ export class AnimalForm implements OnInit {
         }
         adotante.updateValueAndValidity();
       });
+
+    // Se a raça selecionada deixa de pertencer à espécie filtrada, limpa a seleção.
+    effect(() => {
+      const idsValidos = new Set(this.racasFiltradas().map((r) => r.id));
+      const racaId = this.form.controls.racaId.value;
+      if (racaId !== null && !idsValidos.has(racaId)) {
+        this.form.controls.racaId.setValue(null);
+      }
+    });
   }
 
   get ehAdotado(): boolean {
@@ -165,6 +199,7 @@ export class AnimalForm implements OnInit {
 
   ngOnInit(): void {
     this.carregarRacas();
+    this.carregarEspecies();
     this.carregarAdotantes();
 
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -177,6 +212,13 @@ export class AnimalForm implements OnInit {
   private carregarRacas(): void {
     this.racaService.listar().subscribe({
       next: (dados) => this.racas.set(dados),
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
+  }
+
+  private carregarEspecies(): void {
+    this.especieService.listar().subscribe({
+      next: (dados) => this.especies.set(dados),
       error: (err) => this.notificar(mensagemDeErro(err)),
     });
   }
@@ -204,6 +246,7 @@ export class AnimalForm implements OnInit {
           corOlhos: a.corOlhos ?? '',
           corPelagem: a.corPelagem ?? '',
           observacao: a.observacao ?? '',
+          especieId: (a.raca as Raca)?.especie?.id ?? null,
           racaId: (a.raca as Raca)?.id ?? null,
           adotanteId: (a.adotante as { id: number })?.id ?? null,
         });
@@ -213,6 +256,21 @@ export class AnimalForm implements OnInit {
         this.carregando.set(false);
         this.notificar(mensagemDeErro(err));
       },
+    });
+  }
+
+  abrirCadastroRapidoDeRaca(): void {
+    const ref = this.dialog.open(RacaQuickCreateDialog, {
+      data: { especieIdSugerido: this.form.controls.especieId.value },
+      width: '480px',
+    });
+    ref.afterClosed().subscribe((novaRaca?: Raca) => {
+      if (!novaRaca) return;
+      this.racas.update((rs) => [...rs, novaRaca]);
+      this.form.patchValue({
+        especieId: novaRaca.especie?.id ?? null,
+        racaId: novaRaca.id,
+      });
     });
   }
 

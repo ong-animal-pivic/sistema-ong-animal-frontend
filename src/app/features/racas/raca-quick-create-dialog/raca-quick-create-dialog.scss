@@ -1,0 +1,11 @@
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 320px;
+  padding-top: 4px;
+}
+
+mat-form-field {
+  width: 100%;
+}
