@@ -64,7 +64,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>RG</mat-label>
-          <input matInput formControlName="rg" appMascara="rg" />
+          <input matInput formControlName="rg" />
           @if (form.controls.documento.controls.rg.hasError('required')) {
             <mat-error>Informe o RG.</mat-error>
           }
