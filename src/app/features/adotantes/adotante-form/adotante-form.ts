@@ -87,13 +87,13 @@ export class AdotanteForm implements OnInit {
     dataNascimento: [null as Date | null, Validators.required],
     documento: this.fb.group({
       cpf: ['', [Validators.required, Validators.maxLength(11)]],
-      rg: ['', [Validators.required, Validators.maxLength(20)]],
-      orgaoRg: ['', [Validators.required, Validators.maxLength(10)]],
+      rg: ['', Validators.maxLength(20)],
+      orgaoRg: ['', Validators.maxLength(10)],
     }),
     contato: this.fb.group(
       {
         telefonePrincipal: ['', [Validators.required, Validators.maxLength(15)]],
-        telefoneSecundario: ['', [Validators.required, Validators.maxLength(15)]],
+        telefoneSecundario: ['', Validators.maxLength(15)],
         email: ['', [Validators.email, Validators.maxLength(100)]],
         instagram: ['', Validators.maxLength(50)],
       },
@@ -180,12 +180,12 @@ export class AdotanteForm implements OnInit {
       dataNascimento: paraIso(v.dataNascimento)!,
       documento: {
         cpf: v.documento.cpf!,
-        rg: v.documento.rg!,
-        orgaoRg: v.documento.orgaoRg!,
+        rg: v.documento.rg || null,
+        orgaoRg: v.documento.orgaoRg || null,
       },
       contato: {
         telefonePrincipal: v.contato.telefonePrincipal!,
-        telefoneSecundario: v.contato.telefoneSecundario!,
+        telefoneSecundario: v.contato.telefoneSecundario || null,
         email: v.contato.email || null,
         instagram: v.contato.instagram || null,
       },

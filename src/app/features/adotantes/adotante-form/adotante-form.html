@@ -65,17 +65,11 @@
         <mat-form-field appearance="outline">
           <mat-label>RG</mat-label>
           <input matInput formControlName="rg" />
-          @if (form.controls.documento.controls.rg.hasError('required')) {
-            <mat-error>Informe o RG.</mat-error>
-          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Órgão emissor</mat-label>
           <input matInput formControlName="orgaoRg" maxlength="10" />
-          @if (form.controls.documento.controls.orgaoRg.hasError('required')) {
-            <mat-error>Informe o órgão emissor.</mat-error>
-          }
         </mat-form-field>
       </div>
     </fieldset>
@@ -98,9 +92,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Telefone secundário</mat-label>
           <input matInput formControlName="telefoneSecundario" appMascara="telefone" />
-          @if (form.controls.contato.controls.telefoneSecundario.hasError('required')) {
-            <mat-error>Informe o telefone secundário.</mat-error>
-          } @else if (form.controls.contato.hasError('telefonesIguais') && form.controls.contato.controls.telefoneSecundario.touched) {
+          @if (form.controls.contato.hasError('telefonesIguais') && form.controls.contato.controls.telefoneSecundario.touched) {
             <mat-error>O telefone secundário deve ser diferente do telefone principal.</mat-error>
           }
         </mat-form-field>

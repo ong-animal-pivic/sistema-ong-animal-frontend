@@ -7,13 +7,13 @@ import { EstadoCivil, Escolaridade } from './enums';
  */
 export interface Documento {
   cpf: string;
-  rg: string;
-  orgaoRg: string;
+  rg?: string | null;
+  orgaoRg?: string | null;
 }
 
 export interface Contato {
   telefonePrincipal: string;
-  telefoneSecundario: string;
+  telefoneSecundario?: string | null;
   email?: string | null;
   instagram?: string | null;
 }
