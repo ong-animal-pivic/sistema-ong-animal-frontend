@@ -23,10 +23,12 @@ import { AnimalService } from '../../../services/animal.service';
 import { RacaService } from '../../../services/raca.service';
 import { EspecieService } from '../../../services/especie.service';
 import { AdotanteService } from '../../../services/adotante.service';
+import { ResponsavelService } from '../../../services/responsavel.service';
 import { AnimalPayload } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
 import { Especie } from '../../../models/especie.model';
 import { Adotante } from '../../../models/adotante.model';
+import { Responsavel } from '../../../models/responsavel.model';
 import {
   ANIMAL_PORTES,
   ANIMAL_SEXOS,
@@ -39,6 +41,7 @@ import {
   ESPECIE_LABELS,
 } from '../../../models/enums';
 import { RacaQuickCreateDialog } from '../../racas/raca-quick-create-dialog/raca-quick-create-dialog';
+import { ResponsavelQuickCreateDialog } from '../../responsaveis/responsavel-quick-create-dialog/responsavel-quick-create-dialog';
 import { mensagemDeErro } from '../../../shared/erro';
 import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
@@ -94,6 +97,7 @@ export class AnimalForm implements OnInit {
   private readonly racaService = inject(RacaService);
   private readonly especieService = inject(EspecieService);
   private readonly adotanteService = inject(AdotanteService);
+  private readonly responsavelService = inject(ResponsavelService);
   private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -107,6 +111,7 @@ export class AnimalForm implements OnInit {
   readonly racas = signal<Raca[]>([]);
   readonly especies = signal<Especie[]>([]);
   readonly adotantes = signal<Adotante[]>([]);
+  readonly responsaveis = signal<Responsavel[]>([]);
   readonly carregando = signal(false);
   readonly salvando = signal(false);
   readonly animalId = signal<number | null>(null);
@@ -127,6 +132,7 @@ export class AnimalForm implements OnInit {
     especieId: [null as number | null],
     racaId: [null as number | null, Validators.required],
     adotanteId: [null as number | null],
+    responsavelId: [null as number | null, Validators.required],
   });
 
   // Espécie é só um filtro de UI para a Raça; não faz parte do AnimalPayload.
@@ -201,6 +207,7 @@ export class AnimalForm implements OnInit {
     this.carregarRacas();
     this.carregarEspecies();
     this.carregarAdotantes();
+    this.carregarResponsaveis();
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -230,6 +237,13 @@ export class AnimalForm implements OnInit {
     });
   }
 
+  private carregarResponsaveis(): void {
+    this.responsavelService.listar().subscribe({
+      next: (dados) => this.responsaveis.set(dados),
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
+  }
+
   private carregarAnimal(id: number): void {
     this.carregando.set(true);
     this.animalService.buscarPorId(id).subscribe({
@@ -249,6 +263,7 @@ export class AnimalForm implements OnInit {
           especieId: (a.raca as Raca)?.especie?.id ?? null,
           racaId: (a.raca as Raca)?.id ?? null,
           adotanteId: (a.adotante as { id: number })?.id ?? null,
+          responsavelId: (a.responsavel as Responsavel)?.id ?? null,
         });
         this.carregando.set(false);
       },
@@ -274,6 +289,15 @@ export class AnimalForm implements OnInit {
     });
   }
 
+  abrirCadastroRapidoDeResponsavel(): void {
+    const ref = this.dialog.open(ResponsavelQuickCreateDialog, { width: '560px' });
+    ref.afterClosed().subscribe((novoResponsavel?: Responsavel) => {
+      if (!novoResponsavel) return;
+      this.responsaveis.update((rs) => [...rs, novoResponsavel]);
+      this.form.patchValue({ responsavelId: novoResponsavel.id });
+    });
+  }
+
   salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -296,6 +320,7 @@ export class AnimalForm implements OnInit {
       observacao: v.observacao || null,
       racaId: v.racaId!,
       adotanteId: v.status === 'ADOTADO' && v.adotanteId ? v.adotanteId : null,
+      responsavelId: v.responsavelId!,
     };
 
     this.salvando.set(true);

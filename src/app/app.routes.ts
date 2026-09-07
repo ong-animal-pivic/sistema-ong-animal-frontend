@@ -59,5 +59,33 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/racas/raca-form/raca-form').then((m) => m.RacaForm),
   },
+  {
+    path: 'responsaveis',
+    loadComponent: () =>
+      import('./features/responsaveis/responsavel-list/responsavel-list').then(
+        (m) => m.ResponsavelList,
+      ),
+  },
+  {
+    path: 'responsaveis/novo',
+    loadComponent: () =>
+      import('./features/responsaveis/responsavel-form/responsavel-form').then(
+        (m) => m.ResponsavelForm,
+      ),
+  },
+  {
+    path: 'responsaveis/:id/editar',
+    loadComponent: () =>
+      import('./features/responsaveis/responsavel-form/responsavel-form').then(
+        (m) => m.ResponsavelForm,
+      ),
+  },
+  {
+    path: 'responsaveis/:id',
+    loadComponent: () =>
+      import('./features/responsaveis/responsavel-detail/responsavel-detail').then(
+        (m) => m.ResponsavelDetail,
+      ),
+  },
   { path: '**', redirectTo: 'animais' },
 ];

@@ -18,6 +18,7 @@ import { AdotanteService } from '../../../services/adotante.service';
 import { Animal } from '../../../models/animal.model';
 import { Raca } from '../../../models/raca.model';
 import { Adotante } from '../../../models/adotante.model';
+import { Responsavel } from '../../../models/responsavel.model';
 import {
   AnimalEspecie,
   AnimalPorte,
@@ -70,7 +71,7 @@ export class AnimalList implements OnInit {
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
   readonly termo = signal('');
-  readonly colunas = ['animal', 'especie', 'porte', 'status', 'acoes'];
+  readonly colunas = ['animal', 'especie', 'porte', 'responsavel', 'status', 'acoes'];
 
   readonly opcoesEspecie = ANIMAL_ESPECIES;
   readonly opcoesStatus = ANIMAL_STATUS;
@@ -197,6 +198,10 @@ export class AnimalList implements OnInit {
 
   nomeEspecie(animal: Animal): string {
     return (animal.raca as Raca)?.especie?.nome ?? '—';
+  }
+
+  nomeResponsavel(animal: Animal): string {
+    return (animal.responsavel as Responsavel)?.nome ?? '—';
   }
 
   /** Inicial do nome do animal para o avatar. */

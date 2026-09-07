@@ -1,4 +1,4 @@
-export type TipoMascara = 'cpf' | 'rg' | 'telefone' | 'cep';
+export type TipoMascara = 'cpf' | 'rg' | 'telefone' | 'cep' | 'cnpj';
 
 /** Remove tudo que não é dígito. */
 export function apenasDigitos(valor: string): string {
@@ -52,6 +52,16 @@ export function formatarCep(raw: string): string {
   return resultado;
 }
 
+export function formatarCnpj(raw: string): string {
+  const digitos = apenasDigitos(raw).slice(0, 14);
+  let resultado = digitos.slice(0, 2);
+  if (digitos.length > 2) resultado += `.${digitos.slice(2, 5)}`;
+  if (digitos.length > 5) resultado += `.${digitos.slice(5, 8)}`;
+  if (digitos.length > 8) resultado += `/${digitos.slice(8, 12)}`;
+  if (digitos.length > 12) resultado += `-${digitos.slice(12, 14)}`;
+  return resultado;
+}
+
 /** Data: dd/mm/aaaa. */
 export function formatarData(raw: string): string {
   const digitos = apenasDigitos(raw).slice(0, 8);
@@ -66,6 +76,7 @@ export const MASCARAS: Record<TipoMascara, (raw: string) => string> = {
   rg: formatarRg,
   telefone: formatarTelefone,
   cep: formatarCep,
+  cnpj: formatarCnpj,
 };
 
 /** Extrai o valor "cru" (sem pontuação) de acordo com o tipo de máscara. */
@@ -73,5 +84,6 @@ export function extrairRaw(tipo: TipoMascara, valor: string): string {
   if (tipo === 'rg') return (valor ?? '').toUpperCase().replace(/[^0-9X]/g, '').slice(0, 9);
   if (tipo === 'telefone') return apenasDigitos(valor).slice(0, 11);
   if (tipo === 'cpf') return apenasDigitos(valor).slice(0, 11);
+  if (tipo === 'cnpj') return apenasDigitos(valor).slice(0, 14);
   return apenasDigitos(valor).slice(0, 8);
 }

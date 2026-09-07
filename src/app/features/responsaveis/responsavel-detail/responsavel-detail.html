@@ -1,0 +1,102 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/responsaveis">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!carregando() && responsavel(); as r) {
+    <div class="form-cabecalho">
+      <div class="form-cabecalho__topo">
+        <h1>{{ r.nome }}</h1>
+        <button mat-flat-button color="primary" [routerLink]="['/responsaveis', r.id, 'editar']">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      </div>
+      <p>{{ tipoLabels[r.tipo.nome] }}</p>
+    </div>
+
+    <div class="blocos">
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>fingerprint</mat-icon>
+          Documento e contato
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Documento</dt>
+            <dd>{{ documento(r) }}</dd>
+          </div>
+          <div>
+            <dt>Telefone</dt>
+            <dd>{{ telefone(r) }}</dd>
+          </div>
+          @if (r.contato.email) {
+            <div>
+              <dt>E-mail</dt>
+              <dd>{{ r.contato.email }}</dd>
+            </div>
+          }
+          @if (r.contato.instagram) {
+            <div>
+              <dt>Instagram</dt>
+              <dd>{{ r.contato.instagram }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>home</mat-icon>
+          Endereço
+        </h2>
+        <p class="endereco">{{ endereco(r) }}</p>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>pets</mat-icon>
+          Animais vinculados ({{ r.animaisVinculados?.length ?? 0 }})
+        </h2>
+
+        @if (!r.animaisVinculados || r.animaisVinculados.length === 0) {
+          <p class="vazio-inline">Nenhum animal vinculado a este responsável.</p>
+        } @else {
+          <div class="tabela-wrap">
+            <table mat-table [dataSource]="r.animaisVinculados" class="tabela">
+              <ng-container matColumnDef="animal">
+                <th mat-header-cell *matHeaderCellDef>Animal</th>
+                <td mat-cell *matCellDef="let a">
+                  <a [routerLink]="['/animais', a.id, 'editar']">{{ a.nome }}</a>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="especie">
+                <th mat-header-cell *matHeaderCellDef>Espécie</th>
+                <td mat-cell *matCellDef="let a">{{ nomeEspecie(a) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="raca">
+                <th mat-header-cell *matHeaderCellDef>Raça</th>
+                <td mat-cell *matCellDef="let a">{{ nomeRaca(a) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let a">{{ rotuloStatus(a) }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="colunasAnimais"></tr>
+              <tr mat-row *matRowDef="let row; columns: colunasAnimais"></tr>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

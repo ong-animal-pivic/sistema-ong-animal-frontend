@@ -175,6 +175,28 @@
           </mat-form-field>
         }
 
+        <div class="campo-com-acao">
+          <mat-form-field appearance="outline">
+            <mat-label>Responsável</mat-label>
+            <mat-select formControlName="responsavelId">
+              @for (responsavel of responsaveis(); track responsavel.id) {
+                <mat-option [value]="responsavel.id">{{ responsavel.nome }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.responsavelId.hasError('required')) {
+              <mat-error>Selecione o responsável.</mat-error>
+            }
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Cadastrar novo responsável"
+            (click)="abrirCadastroRapidoDeResponsavel()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
         <mat-form-field appearance="outline">
           <mat-label>Data de resgate</mat-label>
           <input

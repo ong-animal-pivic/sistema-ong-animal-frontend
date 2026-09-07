@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.pagina {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 40px) clamp(16px, 5vw, 48px) 64px;
+}
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--brand-coral-strong);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.form-cabecalho {
+  margin-bottom: 24px;
+
+  &__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--brand-muted);
+    font-size: 0.9rem;
+  }
+
+  button {
+    border-radius: 999px;
+    height: 42px;
+    padding: 0 20px;
+    font-weight: 600;
+  }
+}
+
+.blocos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bloco {
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius);
+  background: var(--brand-surface);
+  padding: 22px;
+  box-shadow: var(--brand-shadow);
+
+  &__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--brand-ink);
+
+    mat-icon {
+      color: var(--brand-coral);
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.lista-dados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px 20px;
+  margin: 0;
+
+  dt {
+    font-size: 0.75rem;
+    color: var(--brand-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+}
+
+.endereco {
+  margin: 0;
+  font-weight: 600;
+}
+
+.vazio-inline {
+  margin: 0;
+  color: var(--brand-muted);
+}
+
+.tabela-wrap {
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-sm);
+  overflow: hidden;
+}
+
+.tabela {
+  width: 100%;
+  background: transparent;
+
+  th.mat-mdc-header-cell {
+    font-weight: 700;
+    color: var(--brand-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  a {
+    color: var(--brand-teal-strong);
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

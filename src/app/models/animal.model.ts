@@ -1,10 +1,12 @@
 import { AnimalPorte, AnimalSexo, AnimalStatus } from './enums';
 import { Raca } from './raca.model';
 import { Adotante } from './adotante.model';
+import { Responsavel } from './responsavel.model';
 
 /**
- * Espelha o AnimalResponseDTO do backend: `raca` e `adotante` vêm sempre
- * como objetos completos. Datas trafegam como string ISO `yyyy-MM-dd`.
+ * Espelha o AnimalResponseDTO do backend: `raca`, `adotante` e `responsavel`
+ * vêm sempre como objetos completos. Datas trafegam como string ISO
+ * `yyyy-MM-dd`.
  */
 export interface Animal {
   id?: number;
@@ -21,11 +23,13 @@ export interface Animal {
   observacao?: string | null;
   raca: Raca;
   adotante?: Adotante | null;
+  responsavel: Responsavel;
 }
 
 /**
- * Espelha o AnimalRequestDTO do backend (corpo de POST/PUT): `racaId` e
- * `adotanteId` são ids escalares na raiz do payload, não objetos aninhados.
+ * Espelha o AnimalRequestDTO do backend (corpo de POST/PUT): `racaId`,
+ * `adotanteId` e `responsavelId` são ids escalares na raiz do payload, não
+ * objetos aninhados.
  */
 export interface AnimalPayload {
   nome: string;
@@ -41,4 +45,5 @@ export interface AnimalPayload {
   observacao?: string | null;
   racaId: number;
   adotanteId?: number | null;
+  responsavelId: number;
 }

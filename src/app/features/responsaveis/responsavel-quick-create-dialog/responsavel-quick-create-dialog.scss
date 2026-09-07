@@ -1,0 +1,30 @@
+.conteudo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  min-width: 420px;
+  max-width: 520px;
+  padding-top: 4px;
+}
+
+.col-2 {
+  grid-column: 1 / -1;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.erro {
+  margin: -6px 0 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brand-coral-strong, #f0503f);
+}
+
+@media (max-width: 560px) {
+  .conteudo {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+}

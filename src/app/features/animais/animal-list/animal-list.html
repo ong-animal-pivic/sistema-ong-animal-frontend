@@ -223,6 +223,7 @@
                   <mat-icon>check</mat-icon> Castrado
                 </span>
               }
+              <span class="chip"><mat-icon>badge</mat-icon> {{ nomeResponsavel(a) }}</span>
             </div>
           </div>
 
@@ -273,6 +274,11 @@
         <ng-container matColumnDef="porte">
           <th mat-header-cell *matHeaderCellDef>Porte</th>
           <td mat-cell *matCellDef="let a">{{ rotuloPorte(a) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="responsavel">
+          <th mat-header-cell *matHeaderCellDef>Responsável</th>
+          <td mat-cell *matCellDef="let a">{{ nomeResponsavel(a) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">

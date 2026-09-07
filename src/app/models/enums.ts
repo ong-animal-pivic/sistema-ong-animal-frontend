@@ -130,3 +130,23 @@ export const CORES_OLHOS: string[] = [
   'Preto',
   'Heterocromia',
 ];
+
+// --- Responsável ---
+
+export type TipoResponsavel =
+  | 'ABRIGO'
+  | 'LAR_TEMPORARIO'
+  | 'ONG'
+  | 'PROTETOR_INDEPENDENTE';
+
+export const TIPOS_RESPONSAVEL: Opcao<TipoResponsavel>[] = [
+  { value: 'ABRIGO', label: 'Abrigo' },
+  { value: 'LAR_TEMPORARIO', label: 'Lar Temporário' },
+  { value: 'ONG', label: 'ONG' },
+  { value: 'PROTETOR_INDEPENDENTE', label: 'Protetor Independente' },
+];
+
+export const TIPO_RESPONSAVEL_LABELS: Record<TipoResponsavel, string> =
+  Object.fromEntries(
+    TIPOS_RESPONSAVEL.map((o) => [o.value, o.label]),
+  ) as Record<TipoResponsavel, string>;
