@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  AbstractControl,
   FormBuilder,
+  ValidationErrors,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -59,6 +61,26 @@ function paraIso(data: Date | null): string | null {
 /** Converte string ISO `yyyy-MM-dd` para Date local (meia-noite). */
 function paraData(iso: string | null | undefined): Date | null {
   return iso ? new Date(`${iso}T00:00:00`) : null;
+}
+
+/** Formata um Date como `dd/MM/yyyy`. */
+function formatarData(data: Date): string {
+  return data.toLocaleDateString('pt-BR');
+}
+
+/**
+ * Validator do campo dataSaida: não pode ser anterior à dataResgate
+ * (espelha a regra de AnimalService.salvar no backend).
+ */
+function dataSaidaNaoAnteriorAoResgate(control: AbstractControl): ValidationErrors | null {
+  const saida = control.value as Date | null;
+  const resgate = control.parent?.get('dataResgate')?.value as Date | null | undefined;
+  if (!saida || !resgate) return null;
+  return saida < resgate
+    ? {
+        dataSaidaAnteriorAoResgate: `A data de saída (${formatarData(saida)}) não pode ser anterior à data de resgate (${formatarData(resgate)}).`,
+      }
+    : null;
 }
 
 /** Filtra a lista de cores pelo texto digitado (case-insensitive); vazio mostra tudo. */
@@ -125,7 +147,7 @@ export class AnimalForm implements OnInit {
     status: ['DISPONIVEL' as AnimalStatus, Validators.required],
     castrado: [false],
     dataResgate: [null as Date | null, Validators.required],
-    dataSaida: [null as Date | null],
+    dataSaida: [null as Date | null, dataSaidaNaoAnteriorAoResgate],
     corOlhos: [''],
     corPelagem: [''],
     observacao: [''],
@@ -187,6 +209,15 @@ export class AnimalForm implements OnInit {
           adotante.setValue(null);
         }
         adotante.updateValueAndValidity();
+      });
+
+    // Revalida a data de saída sempre que a data de resgate muda.
+    this.form.controls.dataResgate.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        const saida = this.form.controls.dataSaida;
+        saida.updateValueAndValidity({ emitEvent: false });
+        if (saida.invalid) saida.markAsTouched();
       });
 
     // Se a raça selecionada deixa de pertencer à espécie filtrada, limpa a seleção.

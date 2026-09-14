@@ -224,6 +224,9 @@
           />
           <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
           <mat-datepicker #pickerSaida />
+          @if (form.controls.dataSaida.hasError('dataSaidaAnteriorAoResgate')) {
+            <mat-error>{{ form.controls.dataSaida.getError('dataSaidaAnteriorAoResgate') }}</mat-error>
+          }
         </mat-form-field>
       </div>
     </fieldset>
