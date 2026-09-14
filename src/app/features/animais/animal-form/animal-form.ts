@@ -147,7 +147,8 @@ export class AnimalForm implements OnInit {
     status: ['DISPONIVEL' as AnimalStatus, Validators.required],
     castrado: [false],
     dataResgate: [null as Date | null, Validators.required],
-    dataSaida: [null as Date | null, dataSaidaNaoAnteriorAoResgate],
+    // Habilitado apenas quando o status é ADOTADO ou OBITO (ver constructor).
+    dataSaida: [{ value: null as Date | null, disabled: true }, dataSaidaNaoAnteriorAoResgate],
     corOlhos: [''],
     corPelagem: [''],
     observacao: [''],
@@ -209,6 +210,18 @@ export class AnimalForm implements OnInit {
           adotante.setValue(null);
         }
         adotante.updateValueAndValidity();
+
+        // Data de saída só é permitida (e obrigatória) em ADOTADO ou OBITO (espelha o backend).
+        const saida = this.form.controls.dataSaida;
+        if (status === 'ADOTADO' || status === 'OBITO') {
+          saida.addValidators(Validators.required);
+          saida.enable({ emitEvent: false });
+        } else {
+          saida.removeValidators(Validators.required);
+          saida.setValue(null, { emitEvent: false });
+          saida.disable({ emitEvent: false });
+        }
+        saida.updateValueAndValidity({ emitEvent: false });
       });
 
     // Revalida a data de saída sempre que a data de resgate muda.
@@ -232,6 +245,11 @@ export class AnimalForm implements OnInit {
 
   get ehAdotado(): boolean {
     return this.form.controls.status.value === 'ADOTADO';
+  }
+
+  get permiteDataSaida(): boolean {
+    const status = this.form.controls.status.value;
+    return status === 'ADOTADO' || status === 'OBITO';
   }
 
   ngOnInit(): void {
@@ -345,7 +363,7 @@ export class AnimalForm implements OnInit {
       status: v.status!,
       castrado: v.castrado!,
       dataResgate: paraIso(v.dataResgate)!,
-      dataSaida: paraIso(v.dataSaida),
+      dataSaida: this.permiteDataSaida ? paraIso(v.dataSaida) : null,
       corOlhos: v.corOlhos || null,
       corPelagem: v.corPelagem || null,
       observacao: v.observacao || null,

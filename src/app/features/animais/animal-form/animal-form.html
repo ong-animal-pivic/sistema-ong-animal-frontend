@@ -224,6 +224,10 @@
           />
           <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
           <mat-datepicker #pickerSaida />
+          <mat-hint>Obrigatório quando o status é "Adotado" ou "Óbito".</mat-hint>
+          @if (form.controls.dataSaida.hasError('required')) {
+            <mat-error>Informe a data de saída.</mat-error>
+          }
           @if (form.controls.dataSaida.hasError('dataSaidaAnteriorAoResgate')) {
             <mat-error>{{ form.controls.dataSaida.getError('dataSaidaAnteriorAoResgate') }}</mat-error>
           }
