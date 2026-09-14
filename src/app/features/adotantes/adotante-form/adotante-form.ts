@@ -22,6 +22,7 @@ import { mensagemDeErro } from '../../../shared/erro';
 import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDirective } from '../../../shared/mascara.directive';
 import { MascaraDataDirective } from '../../../shared/mascara-data.directive';
+import { ErroDeGrupoMatcher } from '../../../shared/erro-de-grupo.matcher';
 
 /** Converte um Date para string ISO `yyyy-MM-dd` no fuso local (sem deslocar o dia). */
 function paraIso(data: Date | null): string | null {
@@ -76,6 +77,7 @@ export class AdotanteForm implements OnInit {
 
   readonly estadosCivis = ESTADOS_CIVIS;
   readonly escolaridades = ESCOLARIDADES;
+  readonly telefonesMatcher = new ErroDeGrupoMatcher('telefonesIguais');
 
   readonly carregando = signal(false);
   readonly salvando = signal(false);

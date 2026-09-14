@@ -9,21 +9,21 @@ export function scrollParaPrimeiroErro(formElement: HTMLElement | null): void {
   // sozinho não garante isso em app zoneless.
   requestAnimationFrame(() => {
     setTimeout(() => {
-      // Busca o primeiro `<mat-error>` de fato renderizado: os templates só
-      // colocam esse elemento no DOM via `@if`/`@else if` quando a mensagem
-      // deve aparecer, então ele reflete exatamente o que o usuário vê —
-      // tanto para erro de campo quanto para erro de grupo (ex.: dois
-      // telefones iguais, que só invalida o grupo, mas exibe a mensagem num
-      // campo específico).
-      const primeiroErroVisivel = formElement.querySelector<HTMLElement>('mat-error');
+      // Busca o primeiro erro de fato renderizado, na ordem do DOM: `<mat-error>`
+      // (erro de campo, ou de grupo exibido num campo via `ErroDeGrupoMatcher`)
+      // ou `.bloco__erro` (erro de grupo exibido no bloco, ex.: CPF/CNPJ). Os
+      // templates só colocam esses elementos no DOM quando a mensagem deve
+      // aparecer, então refletem exatamente o que o usuário vê.
+      const primeiroErroVisivel = formElement.querySelector<HTMLElement>('mat-error, .bloco__erro');
       if (!primeiroErroVisivel) {
         return;
       }
 
-      const alvoDoScroll =
-        primeiroErroVisivel.closest<HTMLElement>('mat-form-field') ?? primeiroErroVisivel;
-      const campoComErro =
-        alvoDoScroll.querySelector<HTMLElement>('[formControlName]') ?? alvoDoScroll;
+      const alvoDoScroll = primeiroErroVisivel.matches('.bloco__erro')
+        ? (primeiroErroVisivel.closest<HTMLElement>('fieldset') ?? primeiroErroVisivel)
+        : (primeiroErroVisivel.closest<HTMLElement>('mat-form-field') ?? primeiroErroVisivel);
+      const inputs = Array.from(alvoDoScroll.querySelectorAll<HTMLInputElement>('input'));
+      const campoComErro = inputs.find((i) => !i.value) ?? inputs[0] ?? alvoDoScroll;
 
       alvoDoScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
       campoComErro.focus({ preventScroll: true });

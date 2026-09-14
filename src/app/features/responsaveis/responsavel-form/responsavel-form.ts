@@ -24,6 +24,7 @@ import { TIPO_RESPONSAVEL_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { scrollParaPrimeiroErro } from '../../../shared/scroll-para-erro';
 import { MascaraDirective } from '../../../shared/mascara.directive';
+import { ErroDeGrupoMatcher } from '../../../shared/erro-de-grupo.matcher';
 
 /** Impede que telefone principal e telefone secundário sejam iguais. */
 const telefonesDiferentesValidator: ValidatorFn = (grupo: AbstractControl): ValidationErrors | null => {
@@ -71,6 +72,7 @@ export class ResponsavelForm implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   readonly tipoLabels = TIPO_RESPONSAVEL_LABELS;
+  readonly telefonesMatcher = new ErroDeGrupoMatcher('telefonesIguais');
 
   readonly tipos = signal<Tipo[]>([]);
   readonly carregando = signal(false);

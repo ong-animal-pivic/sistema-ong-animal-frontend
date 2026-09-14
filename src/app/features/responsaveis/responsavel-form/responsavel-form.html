@@ -69,7 +69,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>CNPJ *</mat-label>
-          <input matInput formControlName="cnpj" appMascara="cnpj" />
+          <input matInput [formControl]="form.controls.cnpj" appMascara="cnpj" />
         </mat-form-field>
       </div>
       @if (form.hasError('cpfECnpjPreenchidos') && (form.controls.documento.controls.cpf.touched || form.controls.cnpj.touched)) {
@@ -97,8 +97,8 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Telefone secundário</mat-label>
-          <input matInput formControlName="telefoneSecundario" appMascara="telefone" />
-          @if (form.controls.contato.hasError('telefonesIguais') && form.controls.contato.controls.telefoneSecundario.touched) {
+          <input matInput formControlName="telefoneSecundario" appMascara="telefone" [errorStateMatcher]="telefonesMatcher" />
+          @if (form.controls.contato.hasError('telefonesIguais')) {
             <mat-error>O telefone secundário deve ser diferente do telefone principal.</mat-error>
           }
         </mat-form-field>
