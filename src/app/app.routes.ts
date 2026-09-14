@@ -24,6 +24,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'animais/:id',
+    loadComponent: () =>
+      import('./features/animais/animal-detail/animal-detail').then(
+        (m) => m.AnimalDetail,
+      ),
+  },
+  {
     path: 'adotantes',
     loadComponent: () =>
       import('./features/adotantes/adotante-list/adotante-list').then(
@@ -42,6 +49,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/adotantes/adotante-form/adotante-form').then(
         (m) => m.AdotanteForm,
+      ),
+  },
+  {
+    path: 'adotantes/:id',
+    loadComponent: () =>
+      import('./features/adotantes/adotante-detail/adotante-detail').then(
+        (m) => m.AdotanteDetail,
       ),
   },
   {

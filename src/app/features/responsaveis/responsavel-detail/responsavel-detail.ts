@@ -13,6 +13,7 @@ import { Responsavel } from '../../../models/responsavel.model';
 import { Animal, AnimalPayload } from '../../../models/animal.model';
 import { AnimalVincularDialog } from '../animal-vincular-dialog/animal-vincular-dialog';
 import { VinculoConfirmDialog } from '../vinculo-confirm-dialog/vinculo-confirm-dialog';
+import { ResponsavelDeleteDialog } from '../responsavel-delete-dialog/responsavel-delete-dialog';
 import { Raca } from '../../../models/raca.model';
 import { TIPO_RESPONSAVEL_LABELS, ESPECIE_LABELS, STATUS_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
@@ -90,6 +91,26 @@ export class ResponsavelDetail implements OnInit {
 
   rotuloStatus(animal: Animal): string {
     return STATUS_LABELS[animal.status] ?? animal.status;
+  }
+
+  confirmarExclusao(responsavel: Responsavel): void {
+    const ref = this.dialog.open(ResponsavelDeleteDialog, {
+      data: { nome: responsavel.nome },
+      width: '420px',
+    });
+    ref.afterClosed().subscribe((confirmado) => {
+      if (confirmado) this.excluir(responsavel);
+    });
+  }
+
+  private excluir(responsavel: Responsavel): void {
+    this.service.excluir(responsavel.id!).subscribe({
+      next: () => {
+        this.notificar(`"${responsavel.nome}" foi excluído.`);
+        this.router.navigate(['/responsaveis']);
+      },
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
   }
 
   abrirVinculo(responsavel: Responsavel): void {

@@ -1,0 +1,130 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/animais">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!carregando() && animal(); as a) {
+    <div class="form-cabecalho">
+      <div class="form-cabecalho__topo">
+        <div class="titulo">
+          <h1>{{ a.nome }}</h1>
+          <span class="badge" [class]="'badge--' + a.status">
+            <span class="badge__ponto"></span>
+            {{ rotuloStatus(a) }}
+          </span>
+        </div>
+        <div class="acoes">
+          <button mat-flat-button color="primary" [routerLink]="['/animais', a.id, 'editar']">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+          <button mat-stroked-button class="btn-excluir" (click)="confirmarExclusao(a)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
+        </div>
+      </div>
+      <p>{{ especie(a) }} · {{ raca(a) }}</p>
+    </div>
+
+    <div class="blocos">
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>pets</mat-icon>
+          Dados gerais
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Espécie</dt>
+            <dd>{{ especie(a) }}</dd>
+          </div>
+          <div>
+            <dt>Raça</dt>
+            <dd>{{ raca(a) }}</dd>
+          </div>
+          <div>
+            <dt>Sexo</dt>
+            <dd>{{ rotuloSexo(a) }}</dd>
+          </div>
+          <div>
+            <dt>Porte</dt>
+            <dd>{{ rotuloPorte(a) }}</dd>
+          </div>
+          <div>
+            <dt>Idade</dt>
+            <dd>{{ idade(a) }}</dd>
+          </div>
+          <div>
+            <dt>Castrado</dt>
+            <dd>{{ a.castrado ? 'Sim' : 'Não' }}</dd>
+          </div>
+          <div>
+            <dt>Cor da pelagem</dt>
+            <dd>{{ a.corPelagem || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Cor dos olhos</dt>
+            <dd>{{ a.corOlhos || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>event</mat-icon>
+          Resgate
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Data de resgate</dt>
+            <dd>{{ data(a.dataResgate) }}</dd>
+          </div>
+          <div>
+            <dt>Data de saída</dt>
+            <dd>{{ data(a.dataSaida) }}</dd>
+          </div>
+        </dl>
+        @if (a.observacao) {
+          <p class="observacao">{{ a.observacao }}</p>
+        }
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>link</mat-icon>
+          Vínculos
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Responsável</dt>
+            <dd>
+              @if (a.responsavel.id) {
+                <a class="link" [routerLink]="['/responsaveis', a.responsavel.id]">{{ a.responsavel.nome }}</a>
+                @if (tipoResponsavel(a)) {
+                  <small> ({{ tipoResponsavel(a) }})</small>
+                }
+              } @else {
+                —
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Adotante</dt>
+            <dd>
+              @if (a.adotante?.id) {
+                <a class="link" [routerLink]="['/adotantes', a.adotante!.id]">{{ a.adotante!.nome }}</a>
+              } @else {
+                —
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  }
+</section>

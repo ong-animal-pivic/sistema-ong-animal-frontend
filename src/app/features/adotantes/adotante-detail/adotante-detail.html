@@ -1,0 +1,107 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/adotantes">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!carregando() && adotante(); as a) {
+    <div class="form-cabecalho">
+      <div class="form-cabecalho__topo">
+        <h1>{{ a.nome }}</h1>
+        <div class="acoes">
+          <button mat-flat-button color="primary" [routerLink]="['/adotantes', a.id, 'editar']">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+          <button mat-stroked-button class="btn-excluir" (click)="confirmarExclusao(a)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
+        </div>
+      </div>
+      <p>{{ cidade(a) }}</p>
+    </div>
+
+    <div class="blocos">
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>fingerprint</mat-icon>
+          Documento e contato
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>CPF</dt>
+            <dd>{{ cpf(a) }}</dd>
+          </div>
+          <div>
+            <dt>RG</dt>
+            <dd>{{ rg(a) }}</dd>
+          </div>
+          <div>
+            <dt>Telefone</dt>
+            <dd>{{ telefone(a.contato.telefonePrincipal) }}</dd>
+          </div>
+          @if (a.contato.telefoneSecundario) {
+            <div>
+              <dt>Telefone secundário</dt>
+              <dd>{{ telefone(a.contato.telefoneSecundario) }}</dd>
+            </div>
+          }
+          @if (a.contato.email) {
+            <div>
+              <dt>E-mail</dt>
+              <dd>{{ a.contato.email }}</dd>
+            </div>
+          }
+          @if (a.contato.instagram) {
+            <div>
+              <dt>Instagram</dt>
+              <dd>{{ a.contato.instagram }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>home</mat-icon>
+          Endereço
+        </h2>
+        <p class="endereco">{{ endereco(a) }}</p>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>person</mat-icon>
+          Dados demográficos
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Nascimento</dt>
+            <dd>{{ nascimento(a) }}</dd>
+          </div>
+          <div>
+            <dt>Profissão</dt>
+            <dd>{{ a.dadosDemograficos.profissao || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Renda mensal</dt>
+            <dd>{{ renda(a) }}</dd>
+          </div>
+          <div>
+            <dt>Estado civil</dt>
+            <dd>{{ estadoCivil(a) }}</dd>
+          </div>
+          <div>
+            <dt>Escolaridade</dt>
+            <dd>{{ escolaridade(a) }}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  }
+</section>

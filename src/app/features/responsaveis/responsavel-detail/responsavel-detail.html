@@ -12,10 +12,16 @@
     <div class="form-cabecalho">
       <div class="form-cabecalho__topo">
         <h1>{{ r.nome }}</h1>
-        <button mat-flat-button color="primary" [routerLink]="['/responsaveis', r.id, 'editar']">
-          <mat-icon>edit</mat-icon>
-          Editar
-        </button>
+        <div class="acoes">
+          <button mat-flat-button color="primary" [routerLink]="['/responsaveis', r.id, 'editar']">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+          <button mat-stroked-button class="btn-excluir" (click)="confirmarExclusao(r)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
+        </div>
       </div>
       <p>{{ tipoLabels[r.tipo.nome] }}</p>
     </div>
@@ -72,7 +78,7 @@
               <ng-container matColumnDef="animal">
                 <th mat-header-cell *matHeaderCellDef>Animal</th>
                 <td mat-cell *matCellDef="let a">
-                  <a [routerLink]="['/animais', a.id, 'editar']">{{ a.nome }}</a>
+                  <a [routerLink]="['/animais', a.id]">{{ a.nome }}</a>
                 </td>
               </ng-container>
 
