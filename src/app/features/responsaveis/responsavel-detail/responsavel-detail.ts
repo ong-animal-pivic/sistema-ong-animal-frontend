@@ -5,10 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { ResponsavelService } from '../../../services/responsavel.service';
+import { AnimalService } from '../../../services/animal.service';
 import { Responsavel } from '../../../models/responsavel.model';
-import { Animal } from '../../../models/animal.model';
+import { Animal, AnimalPayload } from '../../../models/animal.model';
+import { AnimalVincularDialog } from '../animal-vincular-dialog/animal-vincular-dialog';
+import { VinculoConfirmDialog } from '../vinculo-confirm-dialog/vinculo-confirm-dialog';
 import { Raca } from '../../../models/raca.model';
 import { TIPO_RESPONSAVEL_LABELS, ESPECIE_LABELS, STATUS_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
@@ -16,7 +20,7 @@ import { formatarCpf, formatarCnpj, formatarTelefone } from '../../../shared/mas
 
 @Component({
   selector: 'app-responsavel-detail',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, MatTableModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, MatTableModule, MatDialogModule],
   templateUrl: './responsavel-detail.html',
   styleUrl: './responsavel-detail.scss',
 })
@@ -25,6 +29,8 @@ export class ResponsavelDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+  private readonly animalService = inject(AnimalService);
 
   readonly tipoLabels = TIPO_RESPONSAVEL_LABELS;
   readonly colunasAnimais = ['animal', 'especie', 'raca', 'status'];
@@ -84,6 +90,65 @@ export class ResponsavelDetail implements OnInit {
 
   rotuloStatus(animal: Animal): string {
     return STATUS_LABELS[animal.status] ?? animal.status;
+  }
+
+  abrirVinculo(responsavel: Responsavel): void {
+    this.dialog
+      .open(AnimalVincularDialog, { data: { responsavel }, width: '720px', maxWidth: '95vw' })
+      .afterClosed()
+      .subscribe((animal: Animal | undefined) => {
+        if (animal) this.confirmarVinculo(animal, responsavel);
+      });
+  }
+
+  private confirmarVinculo(animal: Animal, responsavel: Responsavel): void {
+    const ref = this.dialog.open(VinculoConfirmDialog, {
+      data: {
+        animal: `${animal.nome} (${this.nomeEspecie(animal)} · ${this.nomeRaca(animal)})`,
+        responsavelAtual: this.descreverResponsavel(animal.responsavel),
+        responsavelNovo: this.descreverResponsavel(responsavel),
+      },
+      width: '460px',
+    });
+    ref.afterClosed().subscribe((confirmado) => {
+      if (confirmado) this.vincular(animal, responsavel);
+    });
+  }
+
+  private vincular(animal: Animal, responsavel: Responsavel): void {
+    this.animalService.atualizar(animal.id!, this.paraPayload(animal, responsavel.id!)).subscribe({
+      next: () => {
+        this.notificar(`"${animal.nome}" foi vinculado a ${responsavel.nome}.`);
+        this.carregar(responsavel.id!);
+      },
+      error: (err) => this.notificar(mensagemDeErro(err)),
+    });
+  }
+
+  private descreverResponsavel(r: Responsavel | null | undefined): string {
+    if (!r) return '—';
+    const tipo = r.tipo?.nome ? ` (${this.tipoLabels[r.tipo.nome]})` : '';
+    return `${r.nome}${tipo}`;
+  }
+
+  /** Reenvia o animal como está, trocando apenas o responsável. */
+  private paraPayload(a: Animal, responsavelId: number): AnimalPayload {
+    return {
+      nome: a.nome,
+      idadeMeses: a.idadeMeses,
+      porte: a.porte,
+      sexo: a.sexo,
+      status: a.status,
+      castrado: a.castrado,
+      dataResgate: a.dataResgate,
+      dataSaida: a.dataSaida ?? null,
+      corOlhos: a.corOlhos ?? null,
+      corPelagem: a.corPelagem ?? null,
+      observacao: a.observacao ?? null,
+      racaId: a.raca.id!,
+      adotanteId: a.adotante?.id ?? null,
+      responsavelId,
+    };
   }
 
   private notificar(mensagem: string): void {
