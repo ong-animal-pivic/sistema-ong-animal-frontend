@@ -81,6 +81,19 @@
               }
             </mat-select>
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtros__campo">
+            <mat-label>Estado (UF)</mat-label>
+            <mat-select
+              multiple
+              [value]="filtroEstado()"
+              (selectionChange)="filtroEstado.set($event.value)"
+            >
+              @for (uf of opcoesEstado(); track uf) {
+                <mat-option [value]="uf">{{ uf }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
     </div>

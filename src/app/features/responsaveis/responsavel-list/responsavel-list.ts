@@ -55,15 +55,29 @@ export class ResponsavelList implements OnInit {
   readonly tipoLabels = TIPO_RESPONSAVEL_LABELS;
   readonly opcoesTipo = TIPOS_RESPONSAVEL;
   readonly filtroTipo = signal<TipoResponsavel[]>([]);
+  readonly filtroEstado = signal<string[]>([]);
+
+  readonly opcoesEstado = computed(() => {
+    const estados = new Set(
+      this.responsaveis()
+        .map((r) => r.endereco?.estado)
+        .filter((uf): uf is string => !!uf),
+    );
+    return [...estados].sort((a, b) => a.localeCompare(b));
+  });
 
   readonly total = computed(() => this.responsaveis().length);
-  readonly filtrosAtivos = computed(() => this.filtroTipo().length > 0);
+  readonly filtrosAtivos = computed(
+    () => this.filtroTipo().length > 0 || this.filtroEstado().length > 0,
+  );
   readonly itensFiltrados = computed(() => {
     const tipos = this.filtroTipo();
+    const estados = this.filtroEstado();
     return this.responsaveis().filter(
       (r) =>
         this.corresponde(r, this.termo()) &&
-        (tipos.length === 0 || (!!r.tipo?.nome && tipos.includes(r.tipo.nome))),
+        (tipos.length === 0 || (!!r.tipo?.nome && tipos.includes(r.tipo.nome))) &&
+        (estados.length === 0 || (!!r.endereco?.estado && estados.includes(r.endereco.estado))),
     );
   });
   readonly totalFiltrado = computed(() => this.itensFiltrados().length);
@@ -79,6 +93,7 @@ export class ResponsavelList implements OnInit {
 
   limparFiltros(): void {
     this.filtroTipo.set([]);
+    this.filtroEstado.set([]);
   }
 
   private lerVisaoSalva(): Visao {
