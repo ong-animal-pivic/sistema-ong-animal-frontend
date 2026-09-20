@@ -126,8 +126,13 @@ export class VoluntarioVincularDialog implements OnInit {
 
   readonly itensFiltrados = computed(() => {
     const termo = this.termo();
+    // Voluntário só pode se vincular a um Responsavel do tipo ONG (regra
+    // validada no backend em VoluntarioService.salvar).
     return this.responsaveis().filter(
-      (r) => r.id !== this.data.responsavelAtualId && this.corresponde(r, termo),
+      (r) =>
+        r.id !== this.data.responsavelAtualId &&
+        r.tipo.nome === 'ONG' &&
+        this.corresponde(r, termo),
     );
   });
 

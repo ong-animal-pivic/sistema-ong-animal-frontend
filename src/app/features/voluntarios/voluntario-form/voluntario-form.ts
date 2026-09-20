@@ -114,8 +114,11 @@ export class VoluntarioForm implements OnInit {
   }
 
   private carregarResponsaveis(): void {
+    // Voluntário só pode se vincular a um Responsavel do tipo ONG (regra
+    // validada no backend em VoluntarioService.salvar); filtra aqui para não
+    // oferecer no select opções que a API sempre rejeitaria.
     this.responsavelService.listar().subscribe({
-      next: (dados) => this.responsaveis.set(dados),
+      next: (dados) => this.responsaveis.set(dados.filter((r) => r.tipo.nome === 'ONG')),
       error: (err) => this.notificar(mensagemDeErro(err)),
     });
   }
