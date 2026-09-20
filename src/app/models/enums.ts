@@ -150,3 +150,25 @@ export const TIPO_RESPONSAVEL_LABELS: Record<TipoResponsavel, string> =
   Object.fromEntries(
     TIPOS_RESPONSAVEL.map((o) => [o.value, o.label]),
   ) as Record<TipoResponsavel, string>;
+
+// --- Voluntário ---
+
+export type FrequenciaVoluntario =
+  | 'DIARIA'
+  | 'SEMANAL'
+  | 'QUINZENAL'
+  | 'MENSAL'
+  | 'EVENTUAL';
+
+export const FREQUENCIAS: Opcao<FrequenciaVoluntario>[] = [
+  { value: 'DIARIA', label: 'Diária' },
+  { value: 'SEMANAL', label: 'Semanal' },
+  { value: 'QUINZENAL', label: 'Quinzenal' },
+  { value: 'MENSAL', label: 'Mensal' },
+  { value: 'EVENTUAL', label: 'Eventual' },
+];
+
+export const FREQUENCIA_LABELS: Record<FrequenciaVoluntario, string> =
+  Object.fromEntries(
+    FREQUENCIAS.map((o) => [o.value, o.label]),
+  ) as Record<FrequenciaVoluntario, string>;

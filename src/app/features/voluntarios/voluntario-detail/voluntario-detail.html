@@ -1,0 +1,109 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/voluntarios">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!carregando() && voluntario(); as v) {
+    <div class="form-cabecalho">
+      <div class="form-cabecalho__topo">
+        <h1>{{ v.nome }}</h1>
+        <div class="acoes">
+          <button mat-flat-button color="primary" [routerLink]="['/voluntarios', v.id, 'editar']">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+          <button mat-stroked-button class="btn-excluir" (click)="confirmarExclusao(v)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
+        </div>
+      </div>
+      <p>{{ frequencia(v) }}</p>
+    </div>
+
+    <div class="blocos">
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>fingerprint</mat-icon>
+          Documento e contato
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Documento</dt>
+            <dd>{{ documento(v) }}</dd>
+          </div>
+          @if (v.idade != null) {
+            <div>
+              <dt>Idade</dt>
+              <dd>{{ v.idade }}</dd>
+            </div>
+          }
+          @if (v.profissao) {
+            <div>
+              <dt>Profissão</dt>
+              <dd>{{ v.profissao }}</dd>
+            </div>
+          }
+          <div>
+            <dt>Telefone</dt>
+            <dd>{{ telefone(v) }}</dd>
+          </div>
+          @if (v.contato.email) {
+            <div>
+              <dt>E-mail</dt>
+              <dd>{{ v.contato.email }}</dd>
+            </div>
+          }
+          @if (v.contato.instagram) {
+            <div>
+              <dt>Instagram</dt>
+              <dd>{{ v.contato.instagram }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>home</mat-icon>
+          Endereço
+        </h2>
+        <p class="endereco">{{ endereco(v) }}</p>
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
+          <mat-icon>link</mat-icon>
+          Vínculos
+        </h2>
+        <dl class="lista-dados">
+          <div>
+            <dt>Responsável</dt>
+            <dd>
+              @if (v.responsavel.id) {
+                <a class="link" [routerLink]="['/responsaveis', v.responsavel.id]">{{ v.responsavel.nome }}</a>
+                @if (v.responsavel.tipo.nome) {
+                  <small> ({{ tipoResponsavelLabels[v.responsavel.tipo.nome] }})</small>
+                }
+              } @else {
+                —
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <div class="vincular">
+          <button mat-stroked-button color="primary" (click)="abrirTrocaResponsavel(v)">
+            <mat-icon>add_link</mat-icon>
+            Trocar responsável
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

@@ -101,5 +101,33 @@ export const routes: Routes = [
         (m) => m.ResponsavelDetail,
       ),
   },
+  {
+    path: 'voluntarios',
+    loadComponent: () =>
+      import('./features/voluntarios/voluntario-list/voluntario-list').then(
+        (m) => m.VoluntarioList,
+      ),
+  },
+  {
+    path: 'voluntarios/novo',
+    loadComponent: () =>
+      import('./features/voluntarios/voluntario-form/voluntario-form').then(
+        (m) => m.VoluntarioForm,
+      ),
+  },
+  {
+    path: 'voluntarios/:id/editar',
+    loadComponent: () =>
+      import('./features/voluntarios/voluntario-form/voluntario-form').then(
+        (m) => m.VoluntarioForm,
+      ),
+  },
+  {
+    path: 'voluntarios/:id',
+    loadComponent: () =>
+      import('./features/voluntarios/voluntario-detail/voluntario-detail').then(
+        (m) => m.VoluntarioDetail,
+      ),
+  },
   { path: '**', redirectTo: 'animais' },
 ];
