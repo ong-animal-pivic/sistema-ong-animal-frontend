@@ -168,7 +168,6 @@
                 </mat-option>
               }
             </mat-select>
-            <mat-hint>Obrigatório quando o status é "Adotado".</mat-hint>
             @if (form.controls.adotanteId.hasError('required')) {
               <mat-error>Selecione o adotante.</mat-error>
             }
@@ -224,7 +223,6 @@
           />
           <mat-datepicker-toggle matIconSuffix [for]="pickerSaida" />
           <mat-datepicker #pickerSaida />
-          <mat-hint>Obrigatório quando o status é "Adotado" ou "Óbito".</mat-hint>
           @if (form.controls.dataSaida.hasError('required')) {
             <mat-error>Informe a data de saída.</mat-error>
           }
