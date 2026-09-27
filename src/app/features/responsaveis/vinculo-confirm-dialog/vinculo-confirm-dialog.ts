@@ -4,9 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 export interface VinculoConfirmData {
+  /** Descrição do item a vincular (animal ou voluntário, conforme `tipo`). */
   animal: string;
   responsavelAtual: string;
   responsavelNovo: string;
+  /** O que está sendo vinculado; padrão `'animal'`. */
+  tipo?: 'animal' | 'voluntario';
 }
 
 @Component({
@@ -15,9 +18,10 @@ export interface VinculoConfirmData {
   template: `
     <div class="dialog">
       <span class="dialog__icone"><mat-icon>add_link</mat-icon></span>
-      <h2 mat-dialog-title>Vincular animal?</h2>
+      <h2 mat-dialog-title>Vincular {{ ehVoluntario ? 'voluntário' : 'animal' }}?</h2>
       <mat-dialog-content>
-        O animal <strong>{{ data.animal }}</strong> está sob os cuidados de
+        O {{ ehVoluntario ? 'voluntário' : 'animal' }} <strong>{{ data.animal }}</strong>
+        {{ ehVoluntario ? 'está vinculado a' : 'está sob os cuidados de' }}
         <strong>{{ data.responsavelAtual }}</strong>. Deseja vinculá-lo a
         <strong>{{ data.responsavelNovo }}</strong>?
       </mat-dialog-content>
@@ -69,4 +73,5 @@ export interface VinculoConfirmData {
 })
 export class VinculoConfirmDialog {
   readonly data = inject<VinculoConfirmData>(MAT_DIALOG_DATA);
+  readonly ehVoluntario = this.data.tipo === 'voluntario';
 }

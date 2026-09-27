@@ -117,6 +117,7 @@ export class VoluntarioDetail implements OnInit {
         animal: v.nome,
         responsavelAtual: this.descreverResponsavel(v.responsavel),
         responsavelNovo: this.descreverResponsavel(responsavel),
+        tipo: 'voluntario',
       },
       width: '460px',
     });

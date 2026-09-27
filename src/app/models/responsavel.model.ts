@@ -1,6 +1,7 @@
 import { Contato, Endereco } from './adotante.model';
 import { Tipo } from './tipo.model';
 import { Animal } from './animal.model';
+import type { Voluntario } from './voluntario.model';
 
 /**
  * Documento de Responsável: diferente de Adotante, o CPF aqui é opcional
@@ -14,8 +15,9 @@ export interface DocumentoResponsavel {
 
 /**
  * Espelha o ResponsavelResponseDTO do backend. `tipo` vem sempre como objeto
- * completo. `animaisVinculados` só é preenchido no GET /responsaveis/{id}
- * (vem `null`/ausente no GET /responsaveis, que retorna a lista).
+ * completo. `animaisVinculados` e `voluntariosVinculados` só são preenchidos
+ * no GET /responsaveis/{id} (vêm `null`/ausentes no GET /responsaveis, que
+ * retorna a lista).
  * `qtdAnimais` é somente leitura: calculado dinamicamente pelo backend
  * (COUNT de animais vinculados), não existe mais como coluna gravável — vem
  * `null` quando o objeto aparece aninhado (ex.: dentro de Animal.responsavel).
@@ -30,6 +32,7 @@ export interface Responsavel {
   qtdAnimais?: number | null;
   tipo: Tipo;
   animaisVinculados?: Animal[] | null;
+  voluntariosVinculados?: Voluntario[] | null;
 }
 
 // Corpo de escrita (POST/PUT): o backend espera o id do tipo como campo escalar.

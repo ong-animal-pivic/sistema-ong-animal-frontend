@@ -9,13 +9,21 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { ResponsavelService } from '../../../services/responsavel.service';
 import { AnimalService } from '../../../services/animal.service';
+import { VoluntarioService } from '../../../services/voluntario.service';
 import { Responsavel } from '../../../models/responsavel.model';
 import { Animal, AnimalPayload } from '../../../models/animal.model';
+import { Voluntario, VoluntarioPayload } from '../../../models/voluntario.model';
 import { AnimalVincularDialog } from '../animal-vincular-dialog/animal-vincular-dialog';
+import { VoluntarioSelecionarDialog } from '../voluntario-selecionar-dialog/voluntario-selecionar-dialog';
 import { VinculoConfirmDialog } from '../vinculo-confirm-dialog/vinculo-confirm-dialog';
 import { ResponsavelDeleteDialog } from '../responsavel-delete-dialog/responsavel-delete-dialog';
 import { Raca } from '../../../models/raca.model';
-import { TIPO_RESPONSAVEL_LABELS, ESPECIE_LABELS, STATUS_LABELS } from '../../../models/enums';
+import {
+  TIPO_RESPONSAVEL_LABELS,
+  ESPECIE_LABELS,
+  STATUS_LABELS,
+  FREQUENCIA_LABELS,
+} from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { formatarCpf, formatarCnpj, formatarTelefone } from '../../../shared/mascara';
 
@@ -32,9 +40,11 @@ export class ResponsavelDetail implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
   private readonly animalService = inject(AnimalService);
+  private readonly voluntarioService = inject(VoluntarioService);
 
   readonly tipoLabels = TIPO_RESPONSAVEL_LABELS;
   readonly colunasAnimais = ['animal', 'especie', 'raca', 'status'];
+  readonly colunasVoluntarios = ['voluntario', 'frequencia', 'telefone', 'email'];
 
   readonly responsavel = signal<Responsavel | null>(null);
   readonly carregando = signal(false);
@@ -93,6 +103,14 @@ export class ResponsavelDetail implements OnInit {
     return STATUS_LABELS[animal.status] ?? animal.status;
   }
 
+  rotuloFrequencia(voluntario: Voluntario): string {
+    return FREQUENCIA_LABELS[voluntario.frequencia] ?? voluntario.frequencia;
+  }
+
+  telefoneVoluntario(voluntario: Voluntario): string {
+    return voluntario.contato?.telefonePrincipal ? formatarTelefone(voluntario.contato.telefonePrincipal) : '—';
+  }
+
   confirmarExclusao(responsavel: Responsavel): void {
     const ref = this.dialog.open(ResponsavelDeleteDialog, {
       data: { nome: responsavel.nome },
@@ -146,6 +164,42 @@ export class ResponsavelDetail implements OnInit {
     });
   }
 
+  abrirVinculoVoluntario(responsavel: Responsavel): void {
+    this.dialog
+      .open(VoluntarioSelecionarDialog, { data: { responsavel }, width: '520px', maxWidth: '95vw' })
+      .afterClosed()
+      .subscribe((voluntario: Voluntario | undefined) => {
+        if (voluntario) this.confirmarVinculoVoluntario(voluntario, responsavel);
+      });
+  }
+
+  private confirmarVinculoVoluntario(voluntario: Voluntario, responsavel: Responsavel): void {
+    const ref = this.dialog.open(VinculoConfirmDialog, {
+      data: {
+        animal: voluntario.nome,
+        responsavelAtual: this.descreverResponsavel(voluntario.responsavel),
+        responsavelNovo: this.descreverResponsavel(responsavel),
+        tipo: 'voluntario',
+      },
+      width: '460px',
+    });
+    ref.afterClosed().subscribe((confirmado) => {
+      if (confirmado) this.vincularVoluntario(voluntario, responsavel);
+    });
+  }
+
+  private vincularVoluntario(voluntario: Voluntario, responsavel: Responsavel): void {
+    this.voluntarioService
+      .atualizar(voluntario.id!, this.paraPayloadVoluntario(voluntario, responsavel.id!))
+      .subscribe({
+        next: () => {
+          this.notificar(`"${voluntario.nome}" foi vinculado a ${responsavel.nome}.`);
+          this.carregar(responsavel.id!);
+        },
+        error: (err) => this.notificar(mensagemDeErro(err)),
+      });
+  }
+
   private descreverResponsavel(r: Responsavel | null | undefined): string {
     if (!r) return '—';
     const tipo = r.tipo?.nome ? ` (${this.tipoLabels[r.tipo.nome]})` : '';
@@ -168,6 +222,20 @@ export class ResponsavelDetail implements OnInit {
       observacao: a.observacao ?? null,
       racaId: a.raca.id!,
       adotanteId: a.adotante?.id ?? null,
+      responsavelId,
+    };
+  }
+
+  /** Reenvia o voluntário como está, trocando apenas o responsável. */
+  private paraPayloadVoluntario(v: Voluntario, responsavelId: number): VoluntarioPayload {
+    return {
+      nome: v.nome,
+      documento: v.documento,
+      idade: v.idade ?? null,
+      profissao: v.profissao ?? null,
+      contato: v.contato,
+      frequencia: v.frequencia,
+      endereco: v.endereco,
       responsavelId,
     };
   }
