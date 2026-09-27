@@ -38,6 +38,10 @@ html {
   --brand-shadow: 0 1px 2px rgba(31, 41, 51, 0.04), 0 8px 24px -12px rgba(31, 41, 51, 0.18);
   --brand-shadow-hover: 0 2px 4px rgba(31, 41, 51, 0.06), 0 16px 36px -14px rgba(31, 41, 51, 0.28);
 
+  // Espaço vertical entre linhas de campos nos formulários. Deixa espaço para
+  // mensagens de erro de até duas linhas sem cobrir o campo de baixo.
+  --form-grade-gap-linha: 20px;
+
   // Realinha os tokens do Material 3 com a marca (botões, form fields, etc.).
   --mat-sys-primary: var(--brand-coral);
   --mat-sys-on-primary: #ffffff;

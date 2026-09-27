@@ -1,7 +1,7 @@
 .conteudo {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px 16px;
+  gap: var(--form-grade-gap-linha) 16px;
   min-width: 420px;
   max-width: 520px;
   padding-top: 4px;

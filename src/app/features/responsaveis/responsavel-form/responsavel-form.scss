@@ -97,7 +97,7 @@
 .grade {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px 16px;
+  gap: var(--form-grade-gap-linha) 16px;
 }
 
 mat-form-field {
