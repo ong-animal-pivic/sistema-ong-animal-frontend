@@ -339,6 +339,34 @@ export const FUNCIONALIDADES: Funcionalidade[] = [
     palavrasChave: ['área', 'sem voluntário', 'vaga', 'precisa', 'setor'],
     tipo: 'atalho',
   },
+  {
+    modulo: 'voluntarios',
+    icone: 'person_off',
+    titulo: 'Voluntários sem área',
+    descricao: 'Quem ainda não atua em nenhuma área',
+    rota: '/voluntarios',
+    queryParams: { area: '0' },
+    palavrasChave: ['sem área', 'alocar', 'distribuir', 'equipe', 'disponível'],
+    tipo: 'atalho',
+  },
+  {
+    modulo: 'areas',
+    icone: 'add_link',
+    titulo: 'Vincular voluntário a uma área',
+    descricao: 'Abra a área e use "Vincular voluntário"',
+    rota: '/areas',
+    palavrasChave: ['vincular', 'alocar', 'área', 'setor', 'equipe', 'voluntário'],
+    tipo: 'atalho',
+  },
+  {
+    modulo: 'voluntarios',
+    icone: 'event_available',
+    titulo: 'Disponibilidade dos voluntários',
+    descricao: 'Abra um voluntário para marcar dias e turnos',
+    rota: '/voluntarios',
+    palavrasChave: ['disponibilidade', 'horário', 'turno', 'dia', 'escala', 'agenda', 'semana'],
+    tipo: 'atalho',
+  },
 
   // --- Cadastros menos frequentes ---
   {
@@ -370,9 +398,12 @@ export function normalizar(texto: string): string {
  * Funcionalidades que casam com todas as palavras digitadas. Os itens das ações
  * rápidas (`destaque`) já estão visíveis na tela, então vão para o fim da lista.
  */
-export function buscarFuncionalidades(termo: string): Funcionalidade[] {
+export function buscarFuncionalidades(
+  termo: string,
+  catalogo: Funcionalidade[] = FUNCIONALIDADES,
+): Funcionalidade[] {
   const palavras = normalizar(termo).split(/\s+/).filter(Boolean);
-  const encontradas = FUNCIONALIDADES.filter((f) => {
+  const encontradas = catalogo.filter((f) => {
     // Casa pelo início das palavras ("castr" → "castrados"), evitando falsos
     // positivos no meio delas ("raca" dentro de "castração").
     const alvo = normalizar([f.titulo, f.descricao, ...f.palavrasChave].join(' ')).split(/[^a-z0-9]+/);

@@ -12,6 +12,8 @@ import { forkJoin } from 'rxjs';
 
 import { AnimalService } from '../../services/animal.service';
 import { VoluntarioService } from '../../services/voluntario.service';
+import { AreaService } from '../../services/area.service';
+import { Area } from '../../models/area.model';
 import { Animal } from '../../models/animal.model';
 import { ESPECIE_LABELS, STATUS_LABELS } from '../../models/enums';
 import { MODULOS, ModuloId } from '../../shared/modulos';
@@ -58,6 +60,7 @@ const MODULOS_PESQUISAVEIS: ModuloId[] = [
 export class Inicio implements OnInit {
   private readonly animalService = inject(AnimalService);
   private readonly voluntarioService = inject(VoluntarioService);
+  private readonly areaService = inject(AreaService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -66,6 +69,7 @@ export class Inicio implements OnInit {
   readonly carregando = signal(false);
   readonly animais = signal<Animal[]>([]);
   readonly totalVoluntarios = signal(0);
+  readonly areas = signal<Area[]>([]);
 
   readonly acoes = FUNCIONALIDADES.filter((f) => f.destaque);
 
@@ -90,8 +94,26 @@ export class Inicio implements OnInit {
     });
   });
 
+  /** "Voluntários da área X": as áreas são cadastradas pelo usuário, então vêm da API. Só na busca. */
+  readonly atalhosAreas = computed<Funcionalidade[]>(() =>
+    this.areas().map((a) => ({
+      modulo: 'areas',
+      icone: 'workspaces',
+      titulo: `Voluntários da área ${a.nome}`,
+      descricao:
+        a.voluntarios.length === 1 ? '1 voluntário' : `${a.voluntarios.length} voluntários`,
+      rota: '/voluntarios',
+      queryParams: { area: a.id },
+      palavrasChave: [a.nome, 'área', 'voluntários'],
+      tipo: 'atalho',
+    })),
+  );
+
   readonly resultadosBusca = computed(() =>
-    buscarFuncionalidades(this.termo()).slice(0, MAX_RESULTADOS_BUSCA),
+    buscarFuncionalidades(this.termo(), [...FUNCIONALIDADES, ...this.atalhosAreas()]).slice(
+      0,
+      MAX_RESULTADOS_BUSCA,
+    ),
   );
 
   private contarStatus(...status: Animal['status'][]): number {
@@ -159,6 +181,11 @@ export class Inicio implements OnInit {
         this.carregando.set(false);
         this.snackBar.open(mensagemDeErro(err), 'Fechar', { duration: 5000 });
       },
+    });
+    // Separado do forkJoin: sem as áreas, só somem os atalhos por área na busca.
+    this.areaService.listar().subscribe({
+      next: (areas) => this.areas.set(areas),
+      error: () => this.areas.set([]),
     });
   }
 
