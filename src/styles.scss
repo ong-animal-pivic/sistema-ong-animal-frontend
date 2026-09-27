@@ -56,6 +56,50 @@ html {
   --mat-sys-outline: var(--brand-border);
   --mat-sys-corner-medium: var(--brand-radius-sm);
   --mat-sys-corner-large: var(--brand-radius);
+
+  // Cor do módulo ativo (padrão = coral da marca). Redefinida abaixo por
+  // `[data-modulo]` para que cada área do sistema tenha identidade própria.
+  --modulo-cor: var(--brand-coral);
+  --modulo-cor-strong: var(--brand-coral-strong);
+  --modulo-cor-soft: var(--brand-coral-soft);
+}
+
+// Paleta por módulo. Aplicada no wrapper do shell (`app.html`) e em qualquer
+// elemento que declare `data-modulo` (itens do menu, cartões da tela inicial).
+[data-modulo='adotantes'] {
+  --modulo-cor: var(--brand-teal);
+  --modulo-cor-strong: var(--brand-teal-strong);
+  --modulo-cor-soft: var(--brand-teal-soft);
+}
+
+[data-modulo='racas'] {
+  --modulo-cor: #e3a13b;
+  --modulo-cor-strong: #b9791c;
+  --modulo-cor-soft: #fff3da;
+}
+
+[data-modulo='responsaveis'] {
+  --modulo-cor: #4a86e0;
+  --modulo-cor-strong: #2f6bc4;
+  --modulo-cor-soft: #e3eefc;
+}
+
+[data-modulo='voluntarios'] {
+  --modulo-cor: #7b6ff0;
+  --modulo-cor-strong: #6155d6;
+  --modulo-cor-soft: #ebe9fe;
+}
+
+// Botões primários (ex.: "Novo adotante", "Salvar") herdam a cor do módulo.
+// Diálogos abrem no overlay, fora do wrapper, e mantêm o coral da marca.
+[data-modulo] {
+  --mat-sys-primary: var(--modulo-cor);
+  --mat-sys-primary-container: var(--modulo-cor-soft);
+}
+
+// O âmbar claro tem pouco contraste com texto branco; nos botões usa o tom forte.
+[data-modulo='racas'] {
+  --mat-sys-primary: var(--modulo-cor-strong);
 }
 
 body {

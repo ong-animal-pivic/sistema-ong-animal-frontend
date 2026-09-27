@@ -1,38 +1,52 @@
-<header class="app-header">
-  <a class="brand" routerLink="/animais">
-    <span class="brand__mark">
-      <mat-icon>pets</mat-icon>
-    </span>
-    <span class="brand__text">
-      <span class="brand__name">{{ title }}</span>
-      <span class="brand__tag">Gestão de resgatados</span>
-    </span>
-  </a>
+<div class="app" [attr.data-modulo]="contexto().modulo.id">
+  <header class="app-header">
+    <a class="brand" routerLink="/">
+      <span class="brand__mark">
+        <mat-icon>pets</mat-icon>
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">{{ title }}</span>
+        <span class="brand__tag">Gestão de resgatados</span>
+      </span>
+    </a>
 
-  <nav class="app-nav">
-    <a routerLink="/animais" routerLinkActive="ativo">
-      <mat-icon>pets</mat-icon>
-      <span>Animais</span>
-    </a>
-    <a routerLink="/adotantes" routerLinkActive="ativo">
-      <mat-icon>group</mat-icon>
-      <span>Adotantes</span>
-    </a>
-    <a routerLink="/racas" routerLinkActive="ativo">
-      <mat-icon>category</mat-icon>
-      <span>Raças</span>
-    </a>
-    <a routerLink="/responsaveis" routerLinkActive="ativo">
-      <mat-icon>badge</mat-icon>
-      <span>Responsáveis</span>
-    </a>
-    <a routerLink="/voluntarios" routerLinkActive="ativo">
-      <mat-icon>volunteer_activism</mat-icon>
-      <span>Voluntários</span>
-    </a>
-  </nav>
-</header>
+    <nav class="app-nav">
+      @for (m of menu; track m.id) {
+        <a
+          [routerLink]="m.rota"
+          routerLinkActive="ativo"
+          [routerLinkActiveOptions]="{ exact: m.id === 'inicio' }"
+          [attr.data-modulo]="m.id"
+        >
+          <mat-icon>{{ m.icone }}</mat-icon>
+          <span>{{ m.nome }}</span>
+        </a>
+      }
+    </nav>
+  </header>
 
-<main class="app-main">
-  <router-outlet />
-</main>
+  @if (contexto().modulo.id !== 'inicio') {
+    <div class="contexto">
+      <div class="contexto__conteudo">
+        <span class="contexto__icone">
+          <mat-icon>{{ contexto().modulo.icone }}</mat-icon>
+        </span>
+        <nav class="trilha" aria-label="Você está em">
+          <a [routerLink]="inicio.rota">{{ inicio.nome }}</a>
+          <mat-icon class="trilha__sep">chevron_right</mat-icon>
+          @if (contexto().pagina) {
+            <a [routerLink]="contexto().modulo.rota">{{ contexto().modulo.nome }}</a>
+            <mat-icon class="trilha__sep">chevron_right</mat-icon>
+            <span class="trilha__atual" aria-current="page">{{ contexto().pagina }}</span>
+          } @else {
+            <span class="trilha__atual" aria-current="page">{{ contexto().modulo.nome }}</span>
+          }
+        </nav>
+      </div>
+    </div>
+  }
+
+  <main class="app-main">
+    <router-outlet />
+  </main>
+</div>

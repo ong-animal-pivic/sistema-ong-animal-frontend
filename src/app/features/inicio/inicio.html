@@ -1,0 +1,85 @@
+<section class="pagina">
+  <div class="boas-vindas">
+    <span class="boas-vindas__icone"><mat-icon>pets</mat-icon></span>
+    <div>
+      <h1>Olá! Bem-vindo(a) de volta</h1>
+      <p>Um resumo da ONG e atalhos para as tarefas do dia a dia.</p>
+    </div>
+  </div>
+
+  <!-- Ações rápidas -->
+  <h2 class="secao-titulo">Ações rápidas</h2>
+  <div class="acoes">
+    @for (acao of acoes; track acao.rota) {
+      <a class="acao" [routerLink]="acao.rota" [attr.data-modulo]="acao.modulo">
+        <span class="acao__icone"><mat-icon>{{ acao.icone }}</mat-icon></span>
+        <span class="acao__texto">
+          <strong>{{ acao.titulo }}</strong>
+          <small>{{ acao.descricao }}</small>
+        </span>
+        <mat-icon class="acao__seta">add</mat-icon>
+      </a>
+    }
+  </div>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  } @else {
+    <!-- Números gerais -->
+    <h2 class="secao-titulo">Números gerais</h2>
+    <div class="indicadores">
+      @for (ind of indicadores(); track ind.rotulo) {
+        <a class="indicador" [routerLink]="ind.rota" [attr.data-modulo]="ind.modulo">
+          <span class="indicador__icone"><mat-icon>{{ ind.icone }}</mat-icon></span>
+          <span class="indicador__valor">{{ ind.valor }}</span>
+          <span class="indicador__rotulo">{{ ind.rotulo }}</span>
+        </a>
+      }
+    </div>
+
+    <!-- Resgates recentes -->
+    <div class="secao-cabecalho">
+      <h2 class="secao-titulo">Resgates recentes</h2>
+      @if (resgatesRecentes().length > 0) {
+        <a mat-button routerLink="/animais" class="ver-todos">
+          Ver todos
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </a>
+      }
+    </div>
+
+    @if (resgatesRecentes().length === 0) {
+      <div class="vazio">
+        <span class="vazio__icone"><mat-icon>pets</mat-icon></span>
+        <p>Nenhum animal resgatado ainda.</p>
+        <a mat-flat-button routerLink="/animais/novo">
+          <mat-icon>add</mat-icon>
+          Cadastrar animal
+        </a>
+      </div>
+    } @else {
+      <ul class="recentes" data-modulo="animais">
+        @for (a of resgatesRecentes(); track a.id) {
+          <li>
+            <a class="recente" [routerLink]="['/animais', a.id]">
+              <span class="avatar">{{ inicial(a) }}</span>
+              <span class="recente__info">
+                <strong>{{ a.nome }}</strong>
+                <small>{{ descricao(a) }}</small>
+              </span>
+              <span class="recente__data">
+                <mat-icon>event</mat-icon>
+                {{ data(a.dataResgate) }}
+              </span>
+              <span class="badge" [class]="'badge--' + a.status">
+                <span class="badge__ponto"></span>
+                {{ rotuloStatus(a) }}
+              </span>
+              <mat-icon class="recente__seta">chevron_right</mat-icon>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>
