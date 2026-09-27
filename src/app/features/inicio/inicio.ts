@@ -109,12 +109,14 @@ export class Inicio implements OnInit {
     })),
   );
 
-  readonly resultadosBusca = computed(() =>
-    buscarFuncionalidades(this.termo(), [...FUNCIONALIDADES, ...this.atalhosAreas()]).slice(
-      0,
-      MAX_RESULTADOS_BUSCA,
-    ),
-  );
+  /** Campo vazio: todas as funcionalidades fora das ações rápidas. Digitando: as 10 melhores. */
+  readonly resultadosBusca = computed(() => {
+    const termo = this.termo();
+    const encontradas = buscarFuncionalidades(termo, [...FUNCIONALIDADES, ...this.atalhosAreas()]);
+    return termo.trim()
+      ? encontradas.slice(0, MAX_RESULTADOS_BUSCA)
+      : encontradas.filter((f) => !f.destaque);
+  });
 
   private contarStatus(...status: Animal['status'][]): number {
     return this.animais().filter((a) => status.includes(a.status)).length;
