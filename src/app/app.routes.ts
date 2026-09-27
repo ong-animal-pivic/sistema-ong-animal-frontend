@@ -158,5 +158,29 @@ export const routes: Routes = [
         (m) => m.VoluntarioDetail,
       ),
   },
+  {
+    path: 'areas',
+    data: dados({ modulo: 'areas' }),
+    loadComponent: () =>
+      import('./features/areas/area-list/area-list').then((m) => m.AreaList),
+  },
+  {
+    path: 'areas/novo',
+    data: dados({ modulo: 'areas', pagina: 'Novo' }),
+    loadComponent: () =>
+      import('./features/areas/area-form/area-form').then((m) => m.AreaForm),
+  },
+  {
+    path: 'areas/:id/editar',
+    data: dados({ modulo: 'areas', pagina: 'Editar' }),
+    loadComponent: () =>
+      import('./features/areas/area-form/area-form').then((m) => m.AreaForm),
+  },
+  {
+    path: 'areas/:id',
+    data: dados({ modulo: 'areas', pagina: 'Detalhe' }),
+    loadComponent: () =>
+      import('./features/areas/area-detail/area-detail').then((m) => m.AreaDetail),
+  },
   { path: '**', redirectTo: '' },
 ];

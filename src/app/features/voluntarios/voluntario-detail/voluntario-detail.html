@@ -78,6 +78,14 @@
 
       <div class="bloco">
         <h2 class="bloco__titulo">
+          <mat-icon>event_available</mat-icon>
+          Disponibilidade
+        </h2>
+        <app-disponibilidade-grade [voluntarioId]="v.id!" />
+      </div>
+
+      <div class="bloco">
+        <h2 class="bloco__titulo">
           <mat-icon>link</mat-icon>
           Vínculos
         </h2>
@@ -92,6 +100,20 @@
                 }
               } @else {
                 —
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Áreas de atuação</dt>
+            <dd>
+              @if (areas(); as lista) {
+                @for (a of lista; track a.id; let ultima = $last) {
+                  <a class="link" [routerLink]="['/areas', a.id]">{{ a.nome }}</a>@if (!ultima) {, }
+                } @empty {
+                  Nenhuma área
+                }
+              } @else {
+                …
               }
             </dd>
           </div>

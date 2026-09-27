@@ -172,3 +172,43 @@ export const FREQUENCIA_LABELS: Record<FrequenciaVoluntario, string> =
   Object.fromEntries(
     FREQUENCIAS.map((o) => [o.value, o.label]),
   ) as Record<FrequenciaVoluntario, string>;
+
+// --- Disponibilidade (voluntário) ---
+// A ordem dos arrays segue a dos enums Java; a grade dia × turno depende dela.
+
+export type DiaSemana =
+  | 'SEGUNDA'
+  | 'TERCA'
+  | 'QUARTA'
+  | 'QUINTA'
+  | 'SEXTA'
+  | 'SABADO'
+  | 'DOMINGO';
+
+export const DIAS_SEMANA: Opcao<DiaSemana>[] = [
+  { value: 'SEGUNDA', label: 'Segunda' },
+  { value: 'TERCA', label: 'Terça' },
+  { value: 'QUARTA', label: 'Quarta' },
+  { value: 'QUINTA', label: 'Quinta' },
+  { value: 'SEXTA', label: 'Sexta' },
+  { value: 'SABADO', label: 'Sábado' },
+  { value: 'DOMINGO', label: 'Domingo' },
+];
+
+export const DIA_SEMANA_LABELS: Record<DiaSemana, string> =
+  Object.fromEntries(
+    DIAS_SEMANA.map((o) => [o.value, o.label]),
+  ) as Record<DiaSemana, string>;
+
+export type Turno = 'MANHA' | 'TARDE' | 'NOITE';
+
+export const TURNOS: Opcao<Turno>[] = [
+  { value: 'MANHA', label: 'Manhã' },
+  { value: 'TARDE', label: 'Tarde' },
+  { value: 'NOITE', label: 'Noite' },
+];
+
+export const TURNO_LABELS: Record<Turno, string> =
+  Object.fromEntries(
+    TURNOS.map((o) => [o.value, o.label]),
+  ) as Record<Turno, string>;

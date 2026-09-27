@@ -1,0 +1,51 @@
+<section class="pagina">
+  <a class="voltar" routerLink="/areas">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a lista
+  </a>
+
+  <div class="form-cabecalho">
+    <h1>{{ ehEdicao() ? 'Editar área' : 'Nova área' }}</h1>
+    <p>Preencha os dados da área de atuação. Campos com * são obrigatórios.</p>
+  </div>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <form #formEl [formGroup]="form" (ngSubmit)="salvar()" class="form">
+    <fieldset class="bloco">
+      <legend class="bloco__titulo">
+        <mat-icon>workspaces</mat-icon>
+        Identificação
+      </legend>
+      <div class="grade">
+        <mat-form-field appearance="outline" class="largura-total">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" maxlength="100" />
+          @if (form.controls.nome.hasError('required')) {
+            <mat-error>Informe o nome.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="largura-total">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" rows="2" maxlength="255"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="largura-total">
+          <mat-label>Observação</mat-label>
+          <textarea matInput formControlName="observacao" rows="3" maxlength="255"></textarea>
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <div class="form-acoes">
+      <button mat-stroked-button type="button" routerLink="/areas">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+        <mat-icon>{{ salvando() ? 'hourglass_top' : 'save' }}</mat-icon>
+        {{ salvando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</section>

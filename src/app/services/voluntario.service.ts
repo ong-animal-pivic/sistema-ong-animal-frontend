@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Voluntario, VoluntarioPayload } from '../models/voluntario.model';
+import { Disponibilidade, DisponibilidadePayload } from '../models/disponibilidade.model';
 
 @Injectable({ providedIn: 'root' })
 export class VoluntarioService {
@@ -27,5 +28,21 @@ export class VoluntarioService {
 
   excluir(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  // Disponibilidade é sub-recurso do voluntário (sem gerenciamento independente no backend).
+  listarDisponibilidades(id: number): Observable<Disponibilidade[]> {
+    return this.http.get<Disponibilidade[]>(`${this.baseUrl}/${id}/disponibilidades`);
+  }
+
+  adicionarDisponibilidade(
+    id: number,
+    disponibilidade: DisponibilidadePayload,
+  ): Observable<Disponibilidade> {
+    return this.http.post<Disponibilidade>(`${this.baseUrl}/${id}/disponibilidades`, disponibilidade);
+  }
+
+  removerDisponibilidade(id: number, disponibilidadeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}/disponibilidades/${disponibilidadeId}`);
   }
 }

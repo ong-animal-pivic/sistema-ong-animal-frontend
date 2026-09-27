@@ -320,6 +320,25 @@ export const FUNCIONALIDADES: Funcionalidade[] = [
     palavrasChave: ['raças', 'listar', 'espécies'],
     tipo: 'atalho',
   },
+  {
+    modulo: 'areas',
+    icone: 'workspaces',
+    titulo: 'Ver áreas de atuação',
+    descricao: 'Resgate, adoção, eventos e outras frentes',
+    rota: '/areas',
+    palavrasChave: ['áreas', 'listar', 'setor', 'frente', 'atuação', 'equipe'],
+    tipo: 'atalho',
+  },
+  {
+    modulo: 'areas',
+    icone: 'group_off',
+    titulo: 'Áreas sem voluntários',
+    descricao: 'Frentes que precisam de gente',
+    rota: '/areas',
+    queryParams: { comVoluntarios: 'false' },
+    palavrasChave: ['área', 'sem voluntário', 'vaga', 'precisa', 'setor'],
+    tipo: 'atalho',
+  },
 
   // --- Cadastros menos frequentes ---
   {
@@ -329,6 +348,15 @@ export const FUNCIONALIDADES: Funcionalidade[] = [
     descricao: 'Adicionar raça de cachorro ou gato',
     rota: '/racas/novo',
     palavrasChave: ['cadastrar raça', 'espécie', 'SRD', 'vira-lata'],
+    tipo: 'cadastro',
+  },
+  {
+    modulo: 'areas',
+    icone: 'workspaces',
+    titulo: 'Nova área',
+    descricao: 'Criar uma área de atuação da ONG',
+    rota: '/areas/novo',
+    palavrasChave: ['cadastrar área', 'setor', 'frente', 'atuação'],
     tipo: 'cadastro',
   },
 ];

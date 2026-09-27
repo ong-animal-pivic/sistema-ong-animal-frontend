@@ -1,0 +1,63 @@
+@if (carregando()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else {
+  <p class="ajuda">Clique em um horário para marcar ou desmarcar a disponibilidade.</p>
+
+  <div class="grade-wrap">
+    <table class="grade">
+      <thead>
+        <tr>
+          <th scope="col"><span class="sr-only">Turno</span></th>
+          @for (d of dias; track d.value) {
+            <th scope="col">
+              <abbr [title]="d.label">{{ abreviar(d.label) }}</abbr>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of turnos; track t.value) {
+          <tr>
+            <th scope="row">{{ t.label }}</th>
+            @for (d of dias; track d.value) {
+              @let disp = celula(d.value, t.value);
+              <td>
+                <button
+                  type="button"
+                  class="celula"
+                  [class.celula--marcada]="!!disp"
+                  [attr.aria-pressed]="!!disp"
+                  [attr.aria-label]="descrever(d.value, t.value)"
+                  [disabled]="emAndamento(d.value, t.value)"
+                  [matTooltip]="dica(d.value, t.value)"
+                  (click)="alternar(d.value, t.value)"
+                >
+                  @if (disp) {
+                    <mat-icon>{{ disp.observacao ? 'sticky_note_2' : 'check' }}</mat-icon>
+                  }
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (comObservacao().length > 0) {
+    <ul class="observacoes">
+      @for (o of comObservacao(); track o.id) {
+        <li>
+          <strong>{{ descrever(o.diaSemana, o.turno) }}</strong> — {{ o.observacao }}
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="vincular">
+    <button mat-stroked-button color="primary" [disabled]="lotada()" (click)="abrirComObservacao()">
+      <mat-icon>edit_note</mat-icon>
+      Adicionar com observação
+    </button>
+  </div>
+}

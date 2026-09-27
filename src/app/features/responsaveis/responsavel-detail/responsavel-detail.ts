@@ -14,7 +14,10 @@ import { Responsavel } from '../../../models/responsavel.model';
 import { Animal, AnimalPayload } from '../../../models/animal.model';
 import { Voluntario, VoluntarioPayload } from '../../../models/voluntario.model';
 import { AnimalVincularDialog } from '../animal-vincular-dialog/animal-vincular-dialog';
-import { VoluntarioSelecionarDialog } from '../voluntario-selecionar-dialog/voluntario-selecionar-dialog';
+import {
+  VoluntarioSelecionarData,
+  VoluntarioSelecionarDialog,
+} from '../../voluntarios/voluntario-selecionar-dialog/voluntario-selecionar-dialog';
 import { VinculoConfirmDialog } from '../vinculo-confirm-dialog/vinculo-confirm-dialog';
 import { ResponsavelDeleteDialog } from '../responsavel-delete-dialog/responsavel-delete-dialog';
 import { Raca } from '../../../models/raca.model';
@@ -165,8 +168,12 @@ export class ResponsavelDetail implements OnInit {
   }
 
   abrirVinculoVoluntario(responsavel: Responsavel): void {
+    const data: VoluntarioSelecionarData = {
+      titulo: `Vincular voluntário a ${responsavel.nome}`,
+      excluirIds: (responsavel.voluntariosVinculados ?? []).map((v) => v.id!),
+    };
     this.dialog
-      .open(VoluntarioSelecionarDialog, { data: { responsavel }, width: '520px', maxWidth: '95vw' })
+      .open(VoluntarioSelecionarDialog, { data, width: '520px', maxWidth: '95vw' })
       .afterClosed()
       .subscribe((voluntario: Voluntario | undefined) => {
         if (voluntario) this.confirmarVinculoVoluntario(voluntario, responsavel);

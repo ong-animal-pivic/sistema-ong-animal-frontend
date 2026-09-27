@@ -90,6 +90,12 @@ html {
   --modulo-cor-soft: #ebe9fe;
 }
 
+[data-modulo='areas'] {
+  --modulo-cor: #d9579b;
+  --modulo-cor-strong: #b83d7f;
+  --modulo-cor-soft: #fde7f2;
+}
+
 // Botões primários (ex.: "Novo adotante", "Salvar") herdam a cor do módulo.
 // Diálogos abrem no overlay, fora do wrapper, e mantêm o coral da marca.
 [data-modulo] {

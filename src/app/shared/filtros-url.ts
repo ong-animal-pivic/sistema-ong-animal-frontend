@@ -7,7 +7,12 @@ import { Opcao } from '../models/enums';
 
 function valoresDaUrl(route: ActivatedRoute, chave: string): string[] {
   const bruto = route.snapshot.queryParamMap.get(chave);
-  return bruto ? bruto.split(',').map((v) => v.trim()).filter(Boolean) : [];
+  return bruto
+    ? bruto
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+    : [];
 }
 
 /** Texto de busca pré-preenchido (`?busca=Rex`), vindo da busca da tela inicial. */
@@ -23,6 +28,13 @@ export function lerFiltroUrl<T extends string>(
 ): T[] {
   const validos = new Set<string>(opcoes.map((o) => o.value));
   return valoresDaUrl(route, chave).filter((v): v is T => validos.has(v));
+}
+
+/** Lê um query param de ids ("1,3") e devolve só os inteiros não negativos. */
+export function lerFiltroIdsUrl(route: ActivatedRoute, chave: string): number[] {
+  return valoresDaUrl(route, chave)
+    .filter((v) => /^\d+$/.test(v))
+    .map(Number);
 }
 
 /** Lê um query param booleano ("true", "false" ou "true,false"). */

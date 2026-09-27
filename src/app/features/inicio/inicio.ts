@@ -36,6 +36,7 @@ const MODULOS_PESQUISAVEIS: ModuloId[] = [
   'voluntarios',
   'responsaveis',
   'racas',
+  'areas',
 ];
 
 @Component({

@@ -7,6 +7,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { VoluntarioService } from '../../../services/voluntario.service';
+import { AreaService } from '../../../services/area.service';
+import { Area } from '../../../models/area.model';
+import { DisponibilidadeGrade } from '../disponibilidade-grade/disponibilidade-grade';
 import { Voluntario, VoluntarioPayload } from '../../../models/voluntario.model';
 import { Responsavel } from '../../../models/responsavel.model';
 import { VoluntarioVincularDialog } from '../voluntario-vincular-dialog/voluntario-vincular-dialog';
@@ -18,7 +21,14 @@ import { formatarCpf, formatarTelefone } from '../../../shared/mascara';
 
 @Component({
   selector: 'app-voluntario-detail',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, MatDialogModule],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    DisponibilidadeGrade,
+  ],
   templateUrl: './voluntario-detail.html',
   styleUrl: './voluntario-detail.scss',
 })
@@ -28,12 +38,15 @@ export class VoluntarioDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly areaService = inject(AreaService);
 
   readonly frequenciaLabels = FREQUENCIA_LABELS;
   readonly tipoResponsavelLabels = TIPO_RESPONSAVEL_LABELS;
 
   readonly voluntario = signal<Voluntario | null>(null);
   readonly carregando = signal(false);
+  /** Áreas em que atua; `null` enquanto carrega (a resposta do voluntário não traz áreas). */
+  readonly areas = signal<Area[] | null>(null);
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -42,6 +55,17 @@ export class VoluntarioDetail implements OnInit {
       return;
     }
     this.carregar(Number(idParam));
+    this.carregarAreas(Number(idParam));
+  }
+
+  private carregarAreas(id: number): void {
+    this.areaService.listar().subscribe({
+      next: (areas) => this.areas.set(areas.filter((a) => a.voluntarios.some((v) => v.id === id))),
+      error: (err) => {
+        this.areas.set([]);
+        this.notificar(mensagemDeErro(err));
+      },
+    });
   }
 
   private carregar(id: number): void {

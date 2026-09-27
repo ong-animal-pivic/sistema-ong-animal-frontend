@@ -8,7 +8,8 @@ export type ModuloId =
   | 'adotantes'
   | 'racas'
   | 'responsaveis'
-  | 'voluntarios';
+  | 'voluntarios'
+  | 'areas';
 
 export interface Modulo {
   id: ModuloId;
@@ -34,6 +35,7 @@ export const MODULOS: Record<ModuloId, Modulo> = {
     icone: 'volunteer_activism',
     rota: '/voluntarios',
   },
+  areas: { id: 'areas', nome: 'Áreas', icone: 'workspaces', rota: '/areas' },
 };
 
 /** Ordem de exibição no menu principal. */
@@ -44,6 +46,7 @@ export const MODULOS_MENU: Modulo[] = [
   MODULOS.racas,
   MODULOS.responsaveis,
   MODULOS.voluntarios,
+  MODULOS.areas,
 ];
 
 /** Dados de rota lidos pelo shell para montar a identidade visual da página. */

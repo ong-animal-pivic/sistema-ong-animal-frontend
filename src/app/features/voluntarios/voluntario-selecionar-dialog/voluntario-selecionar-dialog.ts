@@ -8,12 +8,17 @@ import { MatInputModule } from '@angular/material/input';
 
 import { VoluntarioService } from '../../../services/voluntario.service';
 import { Voluntario } from '../../../models/voluntario.model';
-import { Responsavel } from '../../../models/responsavel.model';
 import { FREQUENCIA_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { contemTexto } from '../../../shared/busca';
 
-/** Lista de seleção de voluntários para vincular ao responsável; fecha retornando o Voluntario escolhido. */
+export interface VoluntarioSelecionarData {
+  titulo: string;
+  /** Voluntários que não devem ser oferecidos (ex.: já vinculados). */
+  excluirIds: number[];
+}
+
+/** Lista de seleção de voluntários para vincular (a um responsável, a uma área…); fecha retornando o Voluntario escolhido. */
 @Component({
   selector: 'app-voluntario-selecionar-dialog',
   imports: [
@@ -25,7 +30,7 @@ import { contemTexto } from '../../../shared/busca';
     MatInputModule,
   ],
   template: `
-    <h2 mat-dialog-title>Vincular voluntário a {{ data.responsavel.nome }}</h2>
+    <h2 mat-dialog-title>{{ data.titulo }}</h2>
     <mat-dialog-content>
       <mat-form-field appearance="outline" class="campo-busca">
         <mat-icon matPrefix>search</mat-icon>
@@ -115,7 +120,7 @@ import { contemTexto } from '../../../shared/busca';
   ],
 })
 export class VoluntarioSelecionarDialog implements OnInit {
-  readonly data = inject<{ responsavel: Responsavel }>(MAT_DIALOG_DATA);
+  readonly data = inject<VoluntarioSelecionarData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<VoluntarioSelecionarDialog, Voluntario>);
   private readonly voluntarioService = inject(VoluntarioService);
 
@@ -126,9 +131,8 @@ export class VoluntarioSelecionarDialog implements OnInit {
 
   readonly itensFiltrados = computed(() => {
     const termo = this.termo();
-    return this.voluntarios().filter(
-      (v) => v.responsavel?.id !== this.data.responsavel.id && this.corresponde(v, termo),
-    );
+    const excluir = new Set(this.data.excluirIds);
+    return this.voluntarios().filter((v) => !excluir.has(v.id!) && this.corresponde(v, termo));
   });
 
   ngOnInit(): void {
