@@ -116,10 +116,16 @@
 }
 
 .lista-dados {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px 20px;
   margin: 0;
+
+  > div {
+    flex: 1 1 auto;
+    min-width: 180px;
+    max-width: 100%;
+  }
 
   dt {
     font-size: 0.75rem;
@@ -132,6 +138,7 @@
   dd {
     margin: 2px 0 0;
     font-weight: 600;
+    overflow-wrap: break-word;
   }
 
   small {
