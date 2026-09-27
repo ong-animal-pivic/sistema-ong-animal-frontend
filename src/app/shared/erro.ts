@@ -4,7 +4,7 @@ import { ProblemDetail } from '../models/problem-detail';
 /** Nomes legíveis dos campos da API, indexados pelo último segmento do caminho (ex.: "documento.cpf" → "cpf"). */
 const ROTULOS_CAMPOS: Record<string, string> = {
   nome: 'Nome',
-  cpf: 'CPF',
+  cpf: 'CPF/CIN',
   rg: 'RG',
   orgaoRg: 'Órgão emissor do RG',
   cnpj: 'CNPJ',

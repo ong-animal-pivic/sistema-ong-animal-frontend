@@ -74,7 +74,7 @@ export class ResponsavelDetail implements OnInit {
   }
 
   documento(r: Responsavel): string {
-    if (r.documento?.cpf) return `CPF: ${formatarCpf(r.documento.cpf)}`;
+    if (r.documento?.cpf) return `CPF/CIN: ${formatarCpf(r.documento.cpf)}`;
     if (r.cnpj) return `CNPJ: ${formatarCnpj(r.cnpj)}`;
     return '—';
   }

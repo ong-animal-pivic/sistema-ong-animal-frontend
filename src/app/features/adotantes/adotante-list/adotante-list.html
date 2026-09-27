@@ -26,7 +26,7 @@
           <mat-icon matPrefix>search</mat-icon>
           <input
             matInput
-            placeholder="Buscar por nome, CPF ou cidade..."
+            placeholder="Buscar por nome, CPF/CIN ou cidade..."
             [value]="termo()"
             (input)="termo.set($any($event.target).value)"
           />

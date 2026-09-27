@@ -34,23 +34,32 @@
       }
     </mat-form-field>
 
-    <ng-container formGroupName="documento">
-      <mat-form-field appearance="outline">
-        <mat-label>CPF *</mat-label>
-        <input matInput formControlName="cpf" appMascara="cpf" />
+    <mat-button-toggle-group
+      class="tipo-documento col-2"
+      formControlName="tipoDocumento"
+      hideSingleSelectionIndicator
+      aria-label="Tipo de documento"
+    >
+      <mat-button-toggle value="cpf">CPF/CIN</mat-button-toggle>
+      <mat-button-toggle value="cnpj">CNPJ</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    @if (tipoDocumento() === 'cpf') {
+      <ng-container formGroupName="documento">
+        <mat-form-field appearance="outline" class="col-2">
+          <mat-label>CPF/CIN *</mat-label>
+          <input matInput formControlName="cpf" appMascara="cpf" />
+        </mat-form-field>
+      </ng-container>
+    } @else {
+      <mat-form-field appearance="outline" class="col-2">
+        <mat-label>CNPJ *</mat-label>
+        <input matInput formControlName="cnpj" appMascara="cnpj" />
       </mat-form-field>
-    </ng-container>
-
-    <mat-form-field appearance="outline">
-      <mat-label>CNPJ *</mat-label>
-      <input matInput formControlName="cnpj" appMascara="cnpj" />
-    </mat-form-field>
-
-    @if (form.hasError('cpfECnpjPreenchidos')) {
-      <p class="erro col-2">Informe apenas CPF ou apenas CNPJ, não os dois.</p>
     }
-    @if (form.hasError('cpfOuCnpjObrigatorio')) {
-      <p class="erro col-2">É obrigatório informar CPF ou CNPJ.</p>
+
+    @if (form.hasError('cpfOuCnpjObrigatorio') && (form.controls.documento.controls.cpf.touched || form.controls.cnpj.touched)) {
+      <p class="erro col-2">{{ tipoDocumento() === 'cpf' ? 'Informe o CPF/CIN.' : 'Informe o CNPJ.' }}</p>
     }
 
     <mat-form-field appearance="outline" class="col-2">

@@ -1,9 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -16,7 +18,7 @@ import { Tipo } from '../../../models/tipo.model';
 import { TIPO_RESPONSAVEL_LABELS } from '../../../models/enums';
 import { mensagemDeErro } from '../../../shared/erro';
 import { MascaraDirective } from '../../../shared/mascara.directive';
-import { cpfOuCnpjValidator } from '../responsavel-form/responsavel-form';
+import { TipoDocumento, cpfOuCnpjValidator } from '../responsavel-form/responsavel-form';
 
 @Component({
   selector: 'app-responsavel-quick-create-dialog',
@@ -26,6 +28,7 @@ import { cpfOuCnpjValidator } from '../responsavel-form/responsavel-form';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonToggleModule,
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
@@ -48,6 +51,8 @@ export class ResponsavelQuickCreateDialog implements OnInit {
   readonly form = this.fb.group(
     {
       nome: ['', [Validators.required, Validators.maxLength(100)]],
+      // Só controla qual campo de documento aparece; não faz parte do ResponsavelPayload.
+      tipoDocumento: ['cpf' as TipoDocumento],
       documento: this.fb.group({
         cpf: ['', Validators.maxLength(11)],
       }),
@@ -63,6 +68,23 @@ export class ResponsavelQuickCreateDialog implements OnInit {
     },
     { validators: cpfOuCnpjValidator },
   );
+
+  readonly tipoDocumento = toSignal(this.form.controls.tipoDocumento.valueChanges, {
+    initialValue: this.form.controls.tipoDocumento.value,
+  });
+
+  constructor() {
+    // Ao trocar o tipo de documento, descarta o que foi digitado no outro para não enviar os dois.
+    this.form.controls.tipoDocumento.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((tipo) => {
+        if (tipo === 'cnpj') {
+          this.form.controls.documento.reset({ cpf: '' });
+        } else {
+          this.form.controls.cnpj.reset('');
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.tipoService.listar().subscribe({

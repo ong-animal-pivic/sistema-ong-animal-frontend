@@ -50,33 +50,42 @@
         <mat-icon>fingerprint</mat-icon>
         Documento
       </legend>
-      <p class="bloco__ajuda">Informe CPF ou CNPJ (apenas um dos dois).</p>
+      <p class="bloco__ajuda">Escolha o tipo de documento do responsável.</p>
+      <mat-button-toggle-group
+        class="tipo-documento"
+        [formControl]="form.controls.tipoDocumento"
+        hideSingleSelectionIndicator
+        aria-label="Tipo de documento"
+      >
+        <mat-button-toggle value="cpf">CPF/CIN</mat-button-toggle>
+        <mat-button-toggle value="cnpj">CNPJ</mat-button-toggle>
+      </mat-button-toggle-group>
+
       <div class="grade">
-        <mat-form-field appearance="outline">
-          <mat-label>CPF *</mat-label>
-          <input matInput formControlName="cpf" appMascara="cpf" />
-        </mat-form-field>
+        @if (tipoDocumento() === 'cpf') {
+          <mat-form-field appearance="outline" class="col-2">
+            <mat-label>CPF/CIN *</mat-label>
+            <input matInput formControlName="cpf" appMascara="cpf" />
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>RG</mat-label>
-          <input matInput formControlName="rg" />
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>RG</mat-label>
+            <input matInput formControlName="rg" />
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Órgão emissor</mat-label>
-          <input matInput formControlName="orgaoRg" maxlength="10" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>CNPJ *</mat-label>
-          <input matInput [formControl]="form.controls.cnpj" appMascara="cnpj" />
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Órgão emissor</mat-label>
+            <input matInput formControlName="orgaoRg" maxlength="10" />
+          </mat-form-field>
+        } @else {
+          <mat-form-field appearance="outline" class="col-2">
+            <mat-label>CNPJ *</mat-label>
+            <input matInput [formControl]="form.controls.cnpj" appMascara="cnpj" />
+          </mat-form-field>
+        }
       </div>
-      @if (form.hasError('cpfECnpjPreenchidos') && (form.controls.documento.controls.cpf.touched || form.controls.cnpj.touched)) {
-        <p class="bloco__erro">Informe apenas CPF ou apenas CNPJ, não os dois.</p>
-      }
       @if (form.hasError('cpfOuCnpjObrigatorio') && (form.controls.documento.controls.cpf.touched || form.controls.cnpj.touched)) {
-        <p class="bloco__erro">É obrigatório informar CPF ou CNPJ.</p>
+        <p class="bloco__erro">{{ tipoDocumento() === 'cpf' ? 'Informe o CPF/CIN.' : 'Informe o CNPJ.' }}</p>
       }
     </fieldset>
 

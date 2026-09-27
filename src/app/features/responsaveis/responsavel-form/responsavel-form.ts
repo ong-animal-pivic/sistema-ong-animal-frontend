@@ -8,9 +8,11 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -45,6 +47,9 @@ export const cpfOuCnpjValidator: ValidatorFn = (grupo: AbstractControl): Validat
   return null;
 };
 
+/** Qual documento o responsável informa: CPF/CIN (pessoa física) ou CNPJ (pessoa jurídica). */
+export type TipoDocumento = 'cpf' | 'cnpj';
+
 @Component({
   selector: 'app-responsavel-form',
   imports: [
@@ -53,6 +58,7 @@ export const cpfOuCnpjValidator: ValidatorFn = (grupo: AbstractControl): Validat
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonToggleModule,
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
@@ -83,6 +89,8 @@ export class ResponsavelForm implements OnInit {
   readonly form = this.fb.group(
     {
       nome: ['', [Validators.required, Validators.maxLength(100)]],
+      // Só controla quais campos de documento aparecem; não faz parte do ResponsavelPayload.
+      tipoDocumento: ['cpf' as TipoDocumento],
       documento: this.fb.group({
         cpf: ['', Validators.maxLength(11)],
         rg: ['', Validators.maxLength(20)],
@@ -112,6 +120,23 @@ export class ResponsavelForm implements OnInit {
     { validators: cpfOuCnpjValidator },
   );
 
+  readonly tipoDocumento = toSignal(this.form.controls.tipoDocumento.valueChanges, {
+    initialValue: this.form.controls.tipoDocumento.value,
+  });
+
+  constructor() {
+    // Ao trocar o tipo de documento, descarta o que foi digitado no outro para não enviar os dois.
+    this.form.controls.tipoDocumento.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((tipo) => {
+        if (tipo === 'cnpj') {
+          this.form.controls.documento.reset({ cpf: '', rg: '', orgaoRg: '' });
+        } else {
+          this.form.controls.cnpj.reset('');
+        }
+      });
+  }
+
   ngOnInit(): void {
     this.carregarTipos();
 
@@ -133,6 +158,7 @@ export class ResponsavelForm implements OnInit {
     this.carregando.set(true);
     this.responsavelService.buscarPorId(id).subscribe({
       next: (r) => {
+        this.form.controls.tipoDocumento.setValue(r.cnpj && !r.documento?.cpf ? 'cnpj' : 'cpf');
         this.form.patchValue({
           nome: r.nome,
           documento: {

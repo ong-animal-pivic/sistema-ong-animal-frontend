@@ -94,6 +94,13 @@
   }
 }
 
+.tipo-documento {
+  margin-bottom: 18px;
+  border-radius: 999px;
+  border-color: var(--brand-border);
+  overflow: hidden;
+}
+
 .grade {
   display: grid;
   grid-template-columns: 1fr 1fr;

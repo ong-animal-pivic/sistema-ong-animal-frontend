@@ -60,7 +60,7 @@ export class VoluntarioDetail implements OnInit {
   }
 
   documento(v: Voluntario): string {
-    return v.documento?.cpf ? `CPF: ${formatarCpf(v.documento.cpf)}` : '—';
+    return v.documento?.cpf ? `CPF/CIN: ${formatarCpf(v.documento.cpf)}` : '—';
   }
 
   telefone(v: Voluntario): string {
