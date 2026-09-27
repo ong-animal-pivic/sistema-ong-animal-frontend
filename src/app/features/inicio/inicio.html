@@ -7,17 +7,81 @@
     </div>
   </div>
 
+  <!-- Busca de funcionalidades -->
+  <mat-form-field appearance="outline" class="busca" subscriptSizing="dynamic">
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      #campoBusca
+      matInput
+      placeholder="Buscar um animal, adotante, voluntário... ou o que você quer fazer"
+      aria-label="Buscar registros ou funcionalidades"
+      [value]="termo()"
+      (input)="termo.set($any($event.target).value)"
+      [matAutocomplete]="sugestoes"
+    />
+    @if (termo()) {
+      <button matSuffix mat-icon-button aria-label="Limpar busca" (click)="termo.set('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    } @else {
+      <kbd matSuffix class="busca__atalho" title="Pressione / para buscar">/</kbd>
+    }
+  </mat-form-field>
+
+  <mat-autocomplete
+    #sugestoes="matAutocomplete"
+    class="busca-sugestoes"
+    [displayWith]="exibirNada"
+    autoActiveFirstOption
+    (optionSelected)="abrirFuncionalidade($event)"
+  >
+    @if (opcoesRegistro().length > 0) {
+      <mat-optgroup label="Buscar registros">
+        @for (f of opcoesRegistro(); track f.modulo) {
+          <mat-option [value]="f">
+            <ng-container *ngTemplateOutlet="sugestao; context: { $implicit: f }" />
+          </mat-option>
+        }
+      </mat-optgroup>
+    }
+    @if (resultadosBusca().length > 0) {
+      <mat-optgroup label="Funcionalidades">
+        @for (f of resultadosBusca(); track f.titulo) {
+          <mat-option [value]="f">
+            <ng-container *ngTemplateOutlet="sugestao; context: { $implicit: f }" />
+          </mat-option>
+        }
+      </mat-optgroup>
+    }
+  </mat-autocomplete>
+
+  <ng-template #sugestao let-f>
+    <span class="sugestao" [attr.data-modulo]="f.modulo">
+      <span class="sugestao__icone"><mat-icon>{{ f.icone }}</mat-icon></span>
+      <span class="sugestao__texto">
+        <strong>{{ f.titulo }}</strong>
+        <small>{{ f.descricao }}</small>
+      </span>
+      <mat-icon class="sugestao__tipo">{{ iconeTipo(f) }}</mat-icon>
+    </span>
+  </ng-template>
+
   <!-- Ações rápidas -->
   <h2 class="secao-titulo">Ações rápidas</h2>
   <div class="acoes">
-    @for (acao of acoes; track acao.rota) {
-      <a class="acao" [routerLink]="acao.rota" [attr.data-modulo]="acao.modulo">
+    @for (acao of acoes; track acao.titulo) {
+      <a
+        class="acao"
+        [routerLink]="acao.rota"
+        [queryParams]="acao.queryParams"
+        [attr.data-modulo]="acao.modulo"
+      >
         <span class="acao__icone"><mat-icon>{{ acao.icone }}</mat-icon></span>
         <span class="acao__texto">
           <strong>{{ acao.titulo }}</strong>
           <small>{{ acao.descricao }}</small>
         </span>
-        <mat-icon class="acao__seta">add</mat-icon>
+        <mat-icon class="acao__seta">{{ iconeTipo(acao) }}</mat-icon>
       </a>
     }
   </div>
@@ -29,7 +93,13 @@
     <h2 class="secao-titulo">Números gerais</h2>
     <div class="indicadores">
       @for (ind of indicadores(); track ind.rotulo) {
-        <a class="indicador" [routerLink]="ind.rota" [attr.data-modulo]="ind.modulo">
+        <a
+          class="indicador"
+          [routerLink]="ind.rota"
+          [queryParams]="ind.queryParams"
+          [attr.data-modulo]="ind.modulo"
+          [attr.aria-label]="'Ver ' + ind.rotulo.toLowerCase() + ' na lista'"
+        >
           <span class="indicador__icone"><mat-icon>{{ ind.icone }}</mat-icon></span>
           <span class="indicador__valor">{{ ind.valor }}</span>
           <span class="indicador__rotulo">{{ ind.rotulo }}</span>

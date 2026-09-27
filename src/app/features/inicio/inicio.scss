@@ -53,6 +53,137 @@
   }
 }
 
+/* Busca de funcionalidades — pílula em destaque */
+.busca {
+  width: 100%;
+  margin: -12px 0 32px;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    border-radius: 999px;
+    background: var(--brand-surface);
+    box-shadow: var(--brand-shadow);
+  }
+
+  ::ng-deep .mat-mdc-form-field-flex {
+    padding: 0 8px 0 12px;
+  }
+
+  ::ng-deep .mat-mdc-form-field-infix {
+    min-height: 54px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border-color: var(--brand-border) !important;
+  }
+
+  &:hover ::ng-deep .mdc-notched-outline__leading,
+  &:hover ::ng-deep .mdc-notched-outline__notch,
+  &:hover ::ng-deep .mdc-notched-outline__trailing {
+    border-color: var(--brand-teal) !important;
+  }
+
+  &.mat-focused ::ng-deep .mdc-notched-outline__leading,
+  &.mat-focused ::ng-deep .mdc-notched-outline__notch,
+  &.mat-focused ::ng-deep .mdc-notched-outline__trailing {
+    border-color: var(--brand-teal-strong) !important;
+    border-width: 2px !important;
+  }
+
+  ::ng-deep .mat-mdc-form-field-icon-prefix {
+    color: var(--brand-muted);
+    padding-right: 6px;
+  }
+
+  input {
+    font-size: 1rem;
+
+    &::placeholder {
+      color: var(--brand-muted);
+      opacity: 0.85;
+    }
+  }
+
+  &__atalho {
+    display: inline-grid;
+    place-items: center;
+    min-width: 26px;
+    height: 26px;
+    margin-right: 10px;
+    border: 1px solid var(--brand-border);
+    border-bottom-width: 2px;
+    border-radius: 7px;
+    background: var(--brand-bg);
+    color: var(--brand-muted);
+    font: 600 0.8rem 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+/* Opções do autocomplete (renderizadas no overlay, mas com o conteúdo deste componente) */
+.sugestao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+
+  &__icone {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--modulo-cor-soft);
+    color: var(--modulo-cor-strong);
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 19px;
+      width: 19px;
+      height: 19px;
+      margin: 0;
+    }
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    line-height: 1.25;
+
+    strong {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    small {
+      color: var(--brand-muted);
+      font-size: 0.78rem;
+    }
+  }
+
+  &__tipo {
+    color: var(--modulo-cor-strong);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin: 0 !important;
+  }
+}
+
+/* Rótulo dos grupos do autocomplete ("Buscar registros" / "Funcionalidades") */
+::ng-deep .busca-sugestoes .mat-mdc-optgroup-label {
+  min-height: 34px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-muted);
+}
+
 /* Títulos de seção */
 .secao-titulo {
   margin: 0 0 14px;
@@ -152,7 +283,7 @@
 /* Números gerais */
 .indicadores {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   margin-bottom: 36px;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -19,6 +19,7 @@ import { mensagemDeErro } from '../../../shared/erro';
 import { formatarCpf, formatarTelefone } from '../../../shared/mascara';
 import { VoluntarioDeleteDialog } from '../voluntario-delete-dialog/voluntario-delete-dialog';
 import { contemTexto } from '../../../shared/busca';
+import { lerBuscaUrl, lerFiltroUrl } from '../../../shared/filtros-url';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'voluntarios:visao';
@@ -43,18 +44,21 @@ const VISAO_KEY = 'voluntarios:visao';
 })
 export class VoluntarioList implements OnInit {
   private readonly service = inject(VoluntarioService);
+  private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly voluntarios = signal<Voluntario[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly termo = signal('');
+  readonly termo = signal(lerBuscaUrl(this.route));
   readonly colunas = ['voluntario', 'documento', 'frequencia', 'telefone', 'responsavel', 'acoes'];
 
   readonly frequenciaLabels = FREQUENCIA_LABELS;
   readonly opcoesFrequencia = FREQUENCIAS;
-  readonly filtroFrequencia = signal<FrequenciaVoluntario[]>([]);
+  readonly filtroFrequencia = signal<FrequenciaVoluntario[]>(
+    lerFiltroUrl(this.route, 'frequencia', FREQUENCIAS),
+  );
 
   readonly total = computed(() => this.voluntarios().length);
   readonly filtrosAtivos = computed(() => this.filtroFrequencia().length > 0);

@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -19,6 +19,7 @@ import { mensagemDeErro } from '../../../shared/erro';
 import { formatarCpf, formatarCnpj, formatarTelefone } from '../../../shared/mascara';
 import { ResponsavelDeleteDialog } from '../responsavel-delete-dialog/responsavel-delete-dialog';
 import { contemTexto } from '../../../shared/busca';
+import { lerBuscaUrl, lerFiltroUrl } from '../../../shared/filtros-url';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'responsaveis:visao';
@@ -43,18 +44,21 @@ const VISAO_KEY = 'responsaveis:visao';
 })
 export class ResponsavelList implements OnInit {
   private readonly service = inject(ResponsavelService);
+  private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly responsaveis = signal<Responsavel[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly termo = signal('');
+  readonly termo = signal(lerBuscaUrl(this.route));
   readonly colunas = ['responsavel', 'documento', 'tipo', 'telefone', 'animais', 'acoes'];
 
   readonly tipoLabels = TIPO_RESPONSAVEL_LABELS;
   readonly opcoesTipo = TIPOS_RESPONSAVEL;
-  readonly filtroTipo = signal<TipoResponsavel[]>([]);
+  readonly filtroTipo = signal<TipoResponsavel[]>(
+    lerFiltroUrl(this.route, 'tipo', TIPOS_RESPONSAVEL),
+  );
   readonly filtroEstado = signal<string[]>([]);
 
   readonly opcoesEstado = computed(() => {

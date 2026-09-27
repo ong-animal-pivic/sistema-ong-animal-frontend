@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -26,6 +26,7 @@ import { mensagemDeErro } from '../../../shared/erro';
 import { AdotanteDeleteDialog } from '../adotante-delete-dialog/adotante-delete-dialog';
 import { formatarCpf, formatarTelefone } from '../../../shared/mascara';
 import { contemTexto } from '../../../shared/busca';
+import { lerBuscaUrl } from '../../../shared/filtros-url';
 import { calcularIdadeAnos } from '../../../shared/idade';
 
 type Visao = 'cards' | 'tabela';
@@ -51,13 +52,14 @@ const VISAO_KEY = 'adotantes:visao';
 })
 export class AdotanteList implements OnInit {
   private readonly service = inject(AdotanteService);
+  private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly termo = signal('');
+  readonly termo = signal(lerBuscaUrl(this.route));
   readonly colunas = ['adotante', 'documento', 'cidade', 'contato', 'acoes'];
 
   readonly opcoesFaixaRenda = FAIXAS_RENDA;

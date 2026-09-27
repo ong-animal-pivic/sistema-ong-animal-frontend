@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -18,6 +18,7 @@ import { AnimalEspecie, ANIMAL_ESPECIES, ESPECIE_LABELS } from '../../../models/
 import { mensagemDeErro } from '../../../shared/erro';
 import { RacaDeleteDialog } from '../raca-delete-dialog/raca-delete-dialog';
 import { contemTexto } from '../../../shared/busca';
+import { lerBuscaUrl, lerFiltroUrl } from '../../../shared/filtros-url';
 
 type Visao = 'cards' | 'tabela';
 const VISAO_KEY = 'racas:visao';
@@ -42,17 +43,20 @@ const VISAO_KEY = 'racas:visao';
 })
 export class RacaList implements OnInit {
   private readonly service = inject(RacaService);
+  private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly racas = signal<Raca[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly termo = signal('');
+  readonly termo = signal(lerBuscaUrl(this.route));
   readonly colunas = ['raca', 'especie', 'acoes'];
 
   readonly opcoesEspecie = ANIMAL_ESPECIES;
-  readonly filtroEspecie = signal<AnimalEspecie[]>([]);
+  readonly filtroEspecie = signal<AnimalEspecie[]>(
+    lerFiltroUrl(this.route, 'especie', ANIMAL_ESPECIES),
+  );
 
   readonly total = computed(() => this.racas().length);
   readonly filtrosAtivos = computed(() => this.filtroEspecie().length > 0);

@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -35,6 +35,7 @@ import {
 import { mensagemDeErro } from '../../../shared/erro';
 import { formatarIdade } from '../../../shared/idade';
 import { contemTexto } from '../../../shared/busca';
+import { lerBuscaUrl, lerFiltroBooleanoUrl, lerFiltroUrl } from '../../../shared/filtros-url';
 import { AnimalDeleteDialog } from '../animal-delete-dialog/animal-delete-dialog';
 
 type Visao = 'cards' | 'tabela';
@@ -60,6 +61,7 @@ const VISAO_KEY = 'animais:visao';
 })
 export class AnimalList implements OnInit {
   private readonly service = inject(AnimalService);
+  private readonly route = inject(ActivatedRoute);
   private readonly racaService = inject(RacaService);
   private readonly adotanteService = inject(AdotanteService);
   private readonly dialog = inject(MatDialog);
@@ -70,7 +72,7 @@ export class AnimalList implements OnInit {
   readonly adotantes = signal<Adotante[]>([]);
   readonly carregando = signal(false);
   readonly visao = signal<Visao>(this.lerVisaoSalva());
-  readonly termo = signal('');
+  readonly termo = signal(lerBuscaUrl(this.route));
   readonly colunas = ['animal', 'especie', 'porte', 'responsavel', 'status', 'acoes'];
 
   readonly opcoesEspecie = ANIMAL_ESPECIES;
@@ -78,12 +80,15 @@ export class AnimalList implements OnInit {
   readonly opcoesSexo = ANIMAL_SEXOS;
   readonly opcoesPorte = ANIMAL_PORTES;
 
-  readonly filtroEspecie = signal<AnimalEspecie[]>([]);
+  // Filtros podem chegar pré-aplicados pela URL (atalhos da tela inicial).
+  readonly filtroEspecie = signal<AnimalEspecie[]>(
+    lerFiltroUrl(this.route, 'especie', ANIMAL_ESPECIES),
+  );
   readonly filtroRacaId = signal<number[]>([]);
-  readonly filtroStatus = signal<AnimalStatus[]>([]);
-  readonly filtroCastrado = signal<boolean[]>([]);
-  readonly filtroSexo = signal<AnimalSexo[]>([]);
-  readonly filtroPorte = signal<AnimalPorte[]>([]);
+  readonly filtroStatus = signal<AnimalStatus[]>(lerFiltroUrl(this.route, 'status', ANIMAL_STATUS));
+  readonly filtroCastrado = signal<boolean[]>(lerFiltroBooleanoUrl(this.route, 'castrado'));
+  readonly filtroSexo = signal<AnimalSexo[]>(lerFiltroUrl(this.route, 'sexo', ANIMAL_SEXOS));
+  readonly filtroPorte = signal<AnimalPorte[]>(lerFiltroUrl(this.route, 'porte', ANIMAL_PORTES));
   readonly filtroAdotanteId = signal<number[]>([]);
 
   readonly total = computed(() => this.animais().length);
