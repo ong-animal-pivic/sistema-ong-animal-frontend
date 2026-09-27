@@ -118,6 +118,7 @@ export class VoluntarioDetail implements OnInit {
         responsavelAtual: this.descreverResponsavel(v.responsavel),
         responsavelNovo: this.descreverResponsavel(responsavel),
         tipo: 'voluntario',
+        acao: 'trocar',
       },
       width: '460px',
     });
@@ -129,7 +130,7 @@ export class VoluntarioDetail implements OnInit {
   private trocarResponsavel(v: Voluntario, responsavel: Responsavel): void {
     this.service.atualizar(v.id!, this.paraPayload(v, responsavel.id!)).subscribe({
       next: () => {
-        this.notificar(`"${v.nome}" foi vinculado a ${responsavel.nome}.`);
+        this.notificar(`Responsável de "${v.nome}" alterado para ${responsavel.nome}.`);
         this.carregar(v.id!);
       },
       error: (err) => this.notificar(mensagemDeErro(err)),

@@ -10,6 +10,8 @@ export interface VinculoConfirmData {
   responsavelNovo: string;
   /** O que está sendo vinculado; padrão `'animal'`. */
   tipo?: 'animal' | 'voluntario';
+  /** Ação confirmada: novo vínculo ou troca de responsável; padrão `'vincular'`. */
+  acao?: 'vincular' | 'trocar';
 }
 
 @Component({
@@ -17,17 +19,26 @@ export interface VinculoConfirmData {
   imports: [MatDialogModule, MatButtonModule, MatIconModule],
   template: `
     <div class="dialog">
-      <span class="dialog__icone"><mat-icon>add_link</mat-icon></span>
-      <h2 mat-dialog-title>Vincular {{ ehVoluntario ? 'voluntário' : 'animal' }}?</h2>
+      <span class="dialog__icone"><mat-icon>{{ ehTroca ? 'swap_horiz' : 'add_link' }}</mat-icon></span>
+      <h2 mat-dialog-title>
+        @if (ehTroca) {
+          Trocar responsável?
+        } @else {
+          Vincular {{ ehVoluntario ? 'voluntário' : 'animal' }}?
+        }
+      </h2>
       <mat-dialog-content>
         O {{ ehVoluntario ? 'voluntário' : 'animal' }} <strong>{{ data.animal }}</strong>
         {{ ehVoluntario ? 'está vinculado a' : 'está sob os cuidados de' }}
-        <strong>{{ data.responsavelAtual }}</strong>. Deseja vinculá-lo a
+        <strong>{{ data.responsavelAtual }}</strong>.
+        {{ ehTroca ? 'Deseja trocar o responsável para' : 'Deseja vinculá-lo a' }}
         <strong>{{ data.responsavelNovo }}</strong>?
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-stroked-button mat-dialog-close>Cancelar</button>
-        <button mat-flat-button color="primary" [mat-dialog-close]="true">Vincular</button>
+        <button mat-flat-button color="primary" [mat-dialog-close]="true">
+          {{ ehTroca ? 'Trocar' : 'Vincular' }}
+        </button>
       </mat-dialog-actions>
     </div>
   `,
@@ -74,4 +85,5 @@ export interface VinculoConfirmData {
 export class VinculoConfirmDialog {
   readonly data = inject<VinculoConfirmData>(MAT_DIALOG_DATA);
   readonly ehVoluntario = this.data.tipo === 'voluntario';
+  readonly ehTroca = this.data.acao === 'trocar';
 }
