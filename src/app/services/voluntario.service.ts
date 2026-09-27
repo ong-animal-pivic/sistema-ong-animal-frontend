@@ -39,7 +39,22 @@ export class VoluntarioService {
     id: number,
     disponibilidade: DisponibilidadePayload,
   ): Observable<Disponibilidade> {
-    return this.http.post<Disponibilidade>(`${this.baseUrl}/${id}/disponibilidades`, disponibilidade);
+    return this.http.post<Disponibilidade>(
+      `${this.baseUrl}/${id}/disponibilidades`,
+      disponibilidade,
+    );
+  }
+
+  /** Só a observação é editável; `null` apaga. */
+  atualizarObservacaoDisponibilidade(
+    id: number,
+    disponibilidadeId: number,
+    observacao: string | null,
+  ): Observable<Disponibilidade> {
+    return this.http.put<Disponibilidade>(
+      `${this.baseUrl}/${id}/disponibilidades/${disponibilidadeId}`,
+      { observacao },
+    );
   }
 
   removerDisponibilidade(id: number, disponibilidadeId: number): Observable<void> {

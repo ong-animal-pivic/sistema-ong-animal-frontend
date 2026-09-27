@@ -48,16 +48,44 @@
     <ul class="observacoes">
       @for (o of comObservacao(); track o.id) {
         <li>
-          <strong>{{ descrever(o.diaSemana, o.turno) }}</strong> — {{ o.observacao }}
+          <span>
+            <strong>{{ descrever(o.diaSemana, o.turno) }}</strong> — {{ o.observacao }}
+          </span>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Editar observação"
+            aria-label="Editar observação"
+            [disabled]="emAndamento(o.diaSemana, o.turno)"
+            (click)="abrirObservacao(o)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Apagar observação"
+            aria-label="Apagar observação"
+            [disabled]="emAndamento(o.diaSemana, o.turno)"
+            (click)="salvarObservacao(o, null)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
         </li>
       }
     </ul>
   }
 
   <div class="vincular">
-    <button mat-stroked-button color="primary" [disabled]="lotada()" (click)="abrirComObservacao()">
+    <button
+      mat-stroked-button
+      color="primary"
+      [disabled]="semMarcadas()"
+      [matTooltip]="semMarcadas() ? 'Marque um horário na grade primeiro' : ''"
+      (click)="abrirObservacao()"
+    >
       <mat-icon>edit_note</mat-icon>
-      Adicionar com observação
+      Adicionar observação
     </button>
   </div>
 }

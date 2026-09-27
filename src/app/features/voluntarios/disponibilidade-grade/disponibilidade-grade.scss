@@ -82,11 +82,32 @@
 
 .observacoes {
   margin: 14px 0 0;
-  padding-left: 18px;
+  padding: 0;
+  list-style: none;
   font-size: 0.9rem;
 
-  li + li {
-    margin-top: 4px;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  span {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  button {
+    --mat-icon-button-state-layer-size: 32px;
+    padding: 4px;
+    color: var(--brand-muted);
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 

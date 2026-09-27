@@ -20,6 +20,7 @@ import { mensagemDeErro } from '../../../shared/erro';
 import {
   DisponibilidadeDialog,
   DisponibilidadeDialogData,
+  DisponibilidadeDialogResult,
 } from '../disponibilidade-dialog/disponibilidade-dialog';
 
 const chave = (dia: DiaSemana, turno: Turno): string => `${dia}|${turno}`;
@@ -32,7 +33,7 @@ const ordem = (d: Disponibilidade): number =>
 /**
  * Grade dia × turno da disponibilidade do voluntário. Cada célula liga/desliga
  * a combinação direto na API (POST/DELETE). A observação pertence ao vínculo e
- * a API não tem PUT: para trocá-la, remove-se e adiciona-se de novo.
+ * é adicionada, editada ou apagada (PUT) em um horário já marcado.
  */
 @Component({
   selector: 'app-disponibilidade-grade',
@@ -69,9 +70,7 @@ export class DisponibilidadeGrade implements OnInit {
       .filter((d) => d.observacao)
       .sort((a, b) => ordem(a) - ordem(b)),
   );
-  readonly lotada = computed(
-    () => this.disponibilidades().length === DIAS_SEMANA.length * TURNOS.length,
-  );
+  readonly semMarcadas = computed(() => this.disponibilidades().length === 0);
 
   ngOnInit(): void {
     this.carregar();
@@ -124,13 +123,36 @@ export class DisponibilidadeGrade implements OnInit {
     }
   }
 
-  abrirComObservacao(): void {
-    const data: DisponibilidadeDialogData = { ocupadas: [...this.porCelula().keys()] };
+  abrirObservacao(selecionada?: Disponibilidade): void {
+    const data: DisponibilidadeDialogData = {
+      marcadas: [...this.disponibilidades()].sort((a, b) => ordem(a) - ordem(b)),
+      selecionada,
+    };
     this.dialog
       .open(DisponibilidadeDialog, { data, width: '480px', maxWidth: '95vw' })
       .afterClosed()
-      .subscribe((payload: DisponibilidadePayload | undefined) => {
-        if (payload) this.adicionar(payload);
+      .subscribe((resultado: DisponibilidadeDialogResult | undefined) => {
+        if (resultado) this.salvarObservacao(resultado.disponibilidade, resultado.observacao);
+      });
+  }
+
+  salvarObservacao(d: Disponibilidade, observacao: string | null): void {
+    const k = chave(d.diaSemana, d.turno);
+    if (this.salvando().has(k)) return;
+    this.marcarSalvando(k, true);
+    this.service
+      .atualizarObservacaoDisponibilidade(this.voluntarioId(), d.id, observacao)
+      .subscribe({
+        next: (atualizada) => {
+          this.marcarSalvando(k, false);
+          this.disponibilidades.update((lista) =>
+            lista.map((x) => (x.id === d.id ? atualizada : x)),
+          );
+        },
+        error: (err) => {
+          this.marcarSalvando(k, false);
+          this.notificar(mensagemDeErro(err));
+        },
       });
   }
 
