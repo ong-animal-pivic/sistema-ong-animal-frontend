@@ -9,10 +9,9 @@ export function mensagemDeErro(err: unknown): string {
     }
     const corpo = err.error as ProblemDetail | undefined;
     if (corpo?.detalhes) {
-      const campos = Object.entries(corpo.detalhes).map(
-        ([campo, msg]) => `${campo}: ${msg}`,
-      );
-      if (campos.length) return campos.join(' • ');
+      // Exibe só a mensagem: o caminho do campo (ex.: "documento.cpf") é detalhe técnico.
+      const mensagens = [...new Set(Object.values(corpo.detalhes))];
+      if (mensagens.length) return mensagens.join(' • ');
     }
     if (corpo?.detail) return corpo.detail;
     if (corpo?.title) return corpo.title;
